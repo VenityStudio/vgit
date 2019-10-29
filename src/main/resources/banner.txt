@@ -1,0 +1,7 @@
+${Ansi.GREEN}____   ____________.__  __
+${Ansi.GREEN}\   \ /   /  _____/|__|/  |_
+${Ansi.GREEN} \   Y   /   \  ___|  \   __\
+${Ansi.GREEN}  \     /\    \_\  \  ||  |
+${Ansi.GREEN}   \___/  \______  /__||__|
+${Ansi.GREEN}                 \/
+${Ansi.RED} :: Spring Boot${spring-boot.formatted-version} :: VGit 1.0.0-SNAPSHOT :: ${Ansi.DEFAULT}
