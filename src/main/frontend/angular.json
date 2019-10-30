@@ -28,7 +28,7 @@
               "src/assets"
             ],
             "styles": [
-              "src/styles.less"
+              "src/styles.scss"
             ],
             "scripts": []
           },
@@ -94,7 +94,7 @@
             ],
             "styles": [
               "./node_modules/@angular/material/prebuilt-themes/purple-green.css",
-              "src/styles.less"
+              "src/styles.scss"
             ],
             "scripts": []
           }
@@ -127,5 +127,10 @@
       }
     }
   },
-  "defaultProject": "frontend"
+  "defaultProject": "frontend",
+  "schematics": {
+    "@schematics/angular:component": {
+      "styleext": "scss"
+    }
+  }
 }
