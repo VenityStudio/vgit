@@ -8,8 +8,10 @@ import {VGitComponent} from './vgit/vgit.component';
   styleUrls: ['./app.component.less']
 })
 export class AppComponent extends VGitComponent {
+  drawerOpened: boolean;
   constructor(private vgit: VgitService) {
     super();
+    this.drawerOpened = true;
   }
 }
 

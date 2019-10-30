@@ -21,4 +21,3 @@ export interface MenuItem {
   route?: string;
   id: string;
 }
-

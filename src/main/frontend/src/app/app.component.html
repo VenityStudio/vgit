@@ -1,2 +1,12 @@
-<mat-card>Simple card</mat-card>
-<router-outlet></router-outlet>
+
+<div class="main">
+  <mat-drawer-container autosize>
+  <mat-drawer #drawer mode="side" opened="{{this.drawerOpened}}">
+    <mat-toolbar>
+      VGit
+    </mat-toolbar>
+  </mat-drawer>
+
+    <router-outlet></router-outlet>
+</mat-drawer-container>
+</div>
