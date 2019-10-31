@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import {VgitService} from "../../vgit/vgit.service";
 
 @Component({
   selector: 'app-main',
@@ -7,7 +8,7 @@ import { Component, OnInit } from '@angular/core';
 })
 export class MainComponent implements OnInit {
 
-  constructor() { }
+  constructor(private vgit: VgitService) { }
 
   ngOnInit() {
   }
