@@ -40,12 +40,22 @@ test {
 
 task npmInstall(type: Exec) {
     workingDir 'src/main/frontend'
-    commandLine 'npm', 'install'
+    
+    if (org.gradle.internal.os.OperatingSystem.current().isWindows()) {
+        commandLine 'cmd', '/c', 'npm', 'install'
+    } else {
+        commandLine 'npm', 'install'
+    }
 }
 
 task npmBuild(type: Exec, dependsOn: npmInstall) {
     workingDir 'src/main/frontend'
-    commandLine 'npm', 'run-script', 'build'
+
+    if (org.gradle.internal.os.OperatingSystem.current().isWindows()) {
+        commandLine 'cmd', '/c', 'npm', 'run-script', 'build'
+    } else {
+        commandLine 'npm', 'run-script', 'build'
+    }
 }
 
 compileJava.dependsOn(npmBuild)
