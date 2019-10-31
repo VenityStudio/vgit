@@ -13,11 +13,23 @@ export class AuthModuleComponent implements OnInit {
     password: new FormControl(''),
   });
 
+  registration = new FormGroup({
+    login: new FormControl(''),
+    password: new FormControl(''),
+    repeatPassword: new FormControl(''),
+    fullName: new FormControl(''),
+    email: new FormControl(''),
+  });
+
   constructor(private formGroupBuilder: FormBuilder) {
   }
 
   LOGIN(){
     console.log(this.login)
+  }
+
+  REGISTER(){
+    console.log(this.registration)
   }
 
   ngOnInit() {

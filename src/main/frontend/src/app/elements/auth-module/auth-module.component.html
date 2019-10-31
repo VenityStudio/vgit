@@ -1,16 +1,53 @@
-<form [formGroup]="login" (submit)="LOGIN()">
-  <div class="fields">
-    <mat-form-field>
-      <input matInput placeholder="Login" formControlName="login">
-    </mat-form-field>
-    <mat-form-field>
-      <input matInput placeholder="Password" formControlName="password">
-    </mat-form-field>
-  </div>
-  <div class="buttons">
-    <button mat-button type="submit">
-      Log in
-    </button>
-  </div>
+<mat-tab-group mat-stretch-tabs dynamicHeight>
+  <mat-tab label="Login">
 
-</form>
+    <form [formGroup]="login" (submit)="LOGIN()" autocomplete="off">
+      <div class="fields">
+        <mat-form-field>
+          <input matInput placeholder="Login" formControlName="login">
+        </mat-form-field>
+        <mat-form-field>
+          <input matInput placeholder="Password" formControlName="password" type="password">
+        </mat-form-field>
+      </div>
+      <div class="buttons">
+        <button mat-button type="submit">
+          Log in
+        </button>
+      </div>
+
+    </form>
+
+  </mat-tab>
+
+  <mat-tab label="Registration">
+
+    <form [formGroup]="registration" (submit)="REGISTER()"  autocomplete="off">
+      <div class="fields">
+        <mat-form-field>
+          <input matInput placeholder="Login" formControlName="login">
+        </mat-form-field>
+        <mat-form-field>
+          <input matInput placeholder="Full Name" formControlName="fullName">
+        </mat-form-field>
+        <mat-form-field>
+          <input matInput placeholder="Email" formControlName="email" type="email">
+        </mat-form-field>
+        <mat-form-field>
+          <input matInput placeholder="Password" formControlName="password" type="password">
+        </mat-form-field>
+        <mat-form-field>
+          <input matInput placeholder="Repeat Password" formControlName="repeatPassword" type="password">
+        </mat-form-field>
+      </div>
+      <div class="buttons">
+        <button mat-button type="submit">
+          Register now
+        </button>
+      </div>
+
+    </form>
+
+  </mat-tab>
+
+</mat-tab-group>
