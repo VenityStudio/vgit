@@ -16,6 +16,10 @@ export class AuthModuleComponent implements OnInit {
   constructor(private formGroupBuilder: FormBuilder) {
   }
 
+  LOGIN(){
+    console.log(this.login)
+  }
+
   ngOnInit() {
   }
 

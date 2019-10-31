@@ -1,14 +1,14 @@
-<form [formGroup]="login">
+<form [formGroup]="login" (submit)="LOGIN()">
   <div class="fields">
     <mat-form-field>
-      <input matInput placeholder="Login" formControl="login">
+      <input matInput placeholder="Login" formControlName="login">
     </mat-form-field>
     <mat-form-field>
-      <input matInput placeholder="Password" formControl="password">
+      <input matInput placeholder="Password" formControlName="password">
     </mat-form-field>
   </div>
   <div class="buttons">
-    <button mat-button>
+    <button mat-button type="submit">
       Log in
     </button>
   </div>
