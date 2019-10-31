@@ -1,9 +1,9 @@
 <div class="main">
   <div *ngIf="!vgit.auth.isLoggedIn" class="inLogged">
-    <h1>Welcome to VGit</h1>
+    <h1>{{$$("pages.main.noAuthTitle")}}</h1>
     <mat-card>
-      <mat-card-title>Hello there!</mat-card-title>
-      Please login to see this page
+      <mat-card-title>{{$$("pages.main.noAuthCardTitle")}}</mat-card-title>
+      {{$$("pages.main.noAuthCardContent")}}
       <app-auth-module>
 
       </app-auth-module>

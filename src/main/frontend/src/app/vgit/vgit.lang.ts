@@ -15,6 +15,7 @@ export interface Lang {
   name: string;
   menu: LangMenuOptions;
   pages: LangPagesOptions;
+  authProvider: AuthProviderOptions;
 }
 
 export interface LangMenuOptions {
@@ -23,18 +24,34 @@ export interface LangMenuOptions {
 }
 
 export interface LangMainOptions {
-  title: string;
-  subtitle: string;
-  register: string;
-  login: string;
-  reasons: LangMainReasonsOptions;
+  noAuthTitle: string,
+  noAuthCardTitle: string,
+  noAuthCardContent: string
 }
 
-export interface LangMainReasonsOptions {
-  together: LangPairOptions;
-  share: LangPairOptions;
-  management: LangPairOptions;
+export interface AuthProviderOptions {
+  loginTab: string
+  registrationTab: string
+  login: LangMainLoginOptions
+  registration: LangMainRegistrationOptions
 }
+
+export interface LangMainLoginOptions {
+  login: string;
+  password: string;
+  button: string;
+}
+export interface LangMainRegistrationOptions {
+  login: string;
+  password: string;
+  fullName: string,
+  email: string,
+  repeatPassword: string,
+  button: string;
+}
+
+
+
 
 export interface LangPairOptions {
   title: string;

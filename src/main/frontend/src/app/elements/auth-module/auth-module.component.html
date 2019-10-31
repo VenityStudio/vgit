@@ -1,18 +1,18 @@
 <mat-tab-group mat-stretch-tabs dynamicHeight>
-  <mat-tab label="Login">
+  <mat-tab label="{{$$('authProvider.loginTab')}}">
 
     <form [formGroup]="login" (submit)="LOGIN()" autocomplete="off">
       <div class="fields">
         <mat-form-field>
-          <input matInput placeholder="Login" formControlName="login">
+          <input matInput placeholder="{{$$('authProvider.login.login')}}" formControlName="login">
         </mat-form-field>
         <mat-form-field>
-          <input matInput placeholder="Password" formControlName="password" type="password">
+          <input matInput placeholder="{{$$('authProvider.login.password')}}" formControlName="password" type="password">
         </mat-form-field>
       </div>
       <div class="buttons">
         <button mat-button type="submit">
-          Log in
+          {{$$('authProvider.login.button')}}
         </button>
       </div>
 
@@ -20,29 +20,29 @@
 
   </mat-tab>
 
-  <mat-tab label="Registration">
+  <mat-tab label="{{$$('authProvider.registrationTab')}}">
 
     <form [formGroup]="registration" (submit)="REGISTER()"  autocomplete="off">
       <div class="fields">
         <mat-form-field>
-          <input matInput placeholder="Login" formControlName="login">
+          <input matInput placeholder="{{$$('authProvider.registration.login')}}" formControlName="login">
         </mat-form-field>
         <mat-form-field>
-          <input matInput placeholder="Full Name" formControlName="fullName">
+          <input matInput placeholder="{{$$('authProvider.registration.fullName')}}" formControlName="fullName">
         </mat-form-field>
         <mat-form-field>
-          <input matInput placeholder="Email" formControlName="email" type="email">
+          <input matInput placeholder="{{$$('authProvider.registration.email')}}" formControlName="email" type="email">
         </mat-form-field>
         <mat-form-field>
-          <input matInput placeholder="Password" formControlName="password" type="password">
+          <input matInput placeholder="{{$$('authProvider.registration.password')}}" formControlName="password" type="password">
         </mat-form-field>
         <mat-form-field>
-          <input matInput placeholder="Repeat Password" formControlName="repeatPassword" type="password">
+          <input matInput placeholder="{{$$('authProvider.registration.repeatPassword')}}" formControlName="repeatPassword" type="password">
         </mat-form-field>
       </div>
       <div class="buttons">
         <button mat-button type="submit">
-          Register now
+          {{$$('authProvider.registration.button')}}
         </button>
       </div>
 

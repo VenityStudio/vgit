@@ -1,12 +1,13 @@
 import { Component, OnInit } from '@angular/core';
 import {FormBuilder, FormControl, FormGroup} from "@angular/forms";
+import {VGitComponent} from "../../vgit/vgit.component";
 
 @Component({
   selector: 'app-auth-module',
   templateUrl: './auth-module.component.html',
   styleUrls: ['./auth-module.component.less']
 })
-export class AuthModuleComponent implements OnInit {
+export class AuthModuleComponent extends VGitComponent implements OnInit {
 
   login = new FormGroup({
     login: new FormControl(''),
@@ -22,6 +23,7 @@ export class AuthModuleComponent implements OnInit {
   });
 
   constructor(private formGroupBuilder: FormBuilder) {
+    super();
   }
 
   LOGIN(){
