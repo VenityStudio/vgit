@@ -1,0 +1,10 @@
+.inLogged {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+
+  .mat-card {
+    width: 462px;
+  }
+}
