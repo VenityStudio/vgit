@@ -24,14 +24,12 @@ public class UserService {
         this.passwordDigest = passwordDigest;
     }
 
-    public void register(@NonNull String login,
-                         @NonNull String fullName,
-                         @NonNull String email,
-                         @NonNull String password) throws InvalidFormatException, UserAlreadyExistsException {
-
-        if (userRepositories.existsByLoginOrEmail(login, email)) {
-            throw new UserAlreadyExistsException();
-        }
+    public void register(
+            @NonNull String login,
+            @NonNull String fullName,
+            @NonNull String email,
+            @NonNull String password
+    ) throws InvalidFormatException, UserAlreadyExistsException {
 
         if (!LOGIN_PATTERN.matcher(login).matches() ||
                 !EMAIL_PATTERN.matcher(email).matches() ||
@@ -39,6 +37,10 @@ public class UserService {
                 !PASSWORD_PATTERN.matcher(password).matches()) {
 
             throw new InvalidFormatException();
+        }
+
+        if (userRepositories.existsByLoginOrEmail(login, email)) {
+            throw new UserAlreadyExistsException();
         }
 
         var userPrototype = new UserPrototype();
