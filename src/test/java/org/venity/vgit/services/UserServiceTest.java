@@ -81,7 +81,6 @@ class UserServiceTest extends Assertions {
         validUserPrototype.setPasswordHash(validPasswordHash);
 
         Mockito.verify(userRepository).save(ArgumentMatchers.argThat(argument -> {
-            validUserPrototype.setUuid(argument.getUuid());
             validUserPrototype.setRepositoriesIds(argument.getRepositoriesIds());
 
             return validUserPrototype.equals(argument);

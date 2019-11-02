@@ -1,24 +1,23 @@
 package org.venity.vgit.prototypes;
 
-import lombok.Builder;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
-import org.springframework.data.annotation.Id;
-import org.springframework.data.redis.core.RedisHash;
 
+import javax.persistence.*;
 import java.io.Serializable;
 import java.util.Set;
-import java.util.UUID;
 
+@Entity
 @Data
-@RedisHash("users")
 @NoArgsConstructor
 public class UserPrototype implements Serializable {
 
     @Id
     @NonNull
-    private UUID uuid;
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    private Integer id;
 
     @NonNull
     private String login;
@@ -31,9 +30,11 @@ public class UserPrototype implements Serializable {
     private String status;
 
     @NonNull
-    private Set<UUID> repositoriesIds;
+    @ElementCollection(targetClass = Integer.class)
+    private Set<Integer> repositoriesIds;
 
     @NonNull
+    @JsonIgnore
     private byte[] passwordHash;
     private int avatarId = 0;
 }

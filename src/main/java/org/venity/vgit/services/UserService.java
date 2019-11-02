@@ -9,7 +9,6 @@ import org.venity.vgit.repositories.UserRepository;
 
 import java.security.MessageDigest;
 import java.util.HashSet;
-import java.util.UUID;
 
 import static org.venity.vgit.VGitRegex.*;
 
@@ -46,7 +45,6 @@ public class UserService {
         var userPrototype = new UserPrototype();
         var passwordHash = passwordDigest.get().digest(password.getBytes());
 
-        userPrototype.setUuid(UUID.randomUUID());
         userPrototype.setLogin(login);
         userPrototype.setFullName(fullName);
         userPrototype.setEmail(email);
