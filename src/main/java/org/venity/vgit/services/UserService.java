@@ -14,7 +14,6 @@ import static org.venity.vgit.VGitRegex.*;
 
 @Service
 public class UserService {
-
     private final UserRepository userRepositories;
     private final ThreadLocal<MessageDigest> passwordDigest;
 
@@ -34,7 +33,6 @@ public class UserService {
                 !EMAIL_PATTERN.matcher(email).matches() ||
                 !FULLNAME_PATTERN.matcher(fullName).matches() ||
                 !PASSWORD_PATTERN.matcher(password).matches()) {
-
             throw new InvalidFormatException();
         }
 

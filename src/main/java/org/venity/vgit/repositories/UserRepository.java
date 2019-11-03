@@ -5,6 +5,6 @@ import org.springframework.stereotype.Repository;
 import org.venity.vgit.prototypes.UserPrototype;
 
 @Repository
-public interface UserRepository extends CrudRepository<UserPrototype, String> {
+public interface UserRepository extends CrudRepository<UserPrototype, Integer> {
     boolean existsByLoginOrEmail(String login, String email);
 }
