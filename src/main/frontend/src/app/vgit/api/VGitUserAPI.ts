@@ -6,6 +6,7 @@ export class VGitUserAPI {
 
 
   register(login: string, email: string, fullName: string, password: string, callback) {
-    this.module.callMethod("register", {login, email, fullName, password}, callback);
+    this.module.callMethod("register", {login, email, fullName, password}, callback, "POST");
   }
 }
+

@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import {FormBuilder, FormControl, FormGroup} from "@angular/forms";
 import {VGitComponent} from "../../vgit/vgit.component";
+import {VgitService} from "../../vgit/vgit.service";
 
 @Component({
   selector: 'app-auth-module',
@@ -22,16 +23,20 @@ export class AuthModuleComponent extends VGitComponent implements OnInit {
     email: new FormControl(''),
   });
 
-  constructor(private formGroupBuilder: FormBuilder) {
+  constructor(private formGroupBuilder: FormBuilder, private vgit: VgitService) {
     super();
   }
 
   LOGIN(){
-    console.log(this.login)
   }
 
   REGISTER(){
-    console.log(this.registration)
+    const {login, email, fullName, password, repeatPassword} = this.registration.value
+    if (password !== repeatPassword) {
+      return;
+    }
+    this.vgit.api.user.register(login, email, fullName, password, response => {
+    })
   }
 
   ngOnInit() {
