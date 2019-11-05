@@ -62,4 +62,10 @@ task npmBuild(type: Exec, dependsOn: npmInstall) {
     }
 }
 
-compileJava.dependsOn(npmBuild)
+task runWithFrontend(type: GradleBuild) {
+    tasks = ['npmBuild', 'bootRun']
+}
+
+task buildWithFrontend(type: GradleBuild) {
+    tasks = ['npmBuild', 'bootJar']
+}
