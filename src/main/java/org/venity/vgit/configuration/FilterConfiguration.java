@@ -6,14 +6,18 @@ import org.springframework.context.annotation.Configuration;
 import org.venity.vgit.filters.AuthorizationFilter;
 import org.venity.vgit.repositories.UserRepository;
 import org.venity.vgit.services.JWTService;
+import org.venity.vgit.services.UserAuthenticationProviderService;
 
 @Configuration
 public class FilterConfiguration {
     public static final String USER_SESSION_KEY = "user-session";
 
     @Bean
-    public FilterRegistrationBean<AuthorizationFilter> authorizationFilterRegistrationBean(JWTService jwtService, UserRepository userRepository) {
-        var filterRegistrationBean = new FilterRegistrationBean<>(new AuthorizationFilter(jwtService, userRepository));
+    public FilterRegistrationBean<AuthorizationFilter> authorizationFilterRegistrationBean(
+            JWTService jwtService, UserRepository userRepository,
+            UserAuthenticationProviderService userAuthenticationProviderService) {
+        var filterRegistrationBean = new FilterRegistrationBean<>(
+                new AuthorizationFilter(jwtService, userRepository, userAuthenticationProviderService));
         filterRegistrationBean.setOrder(-101);
 
         return filterRegistrationBean;
