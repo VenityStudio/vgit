@@ -1,5 +1,8 @@
 package org.venity.vgit.controllers;
 
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.web.bind.annotation.*;
@@ -50,28 +53,46 @@ public class UserController extends AbstractController {
     }
 
     @PostMapping("/register")
-    public void registerUser(String login, String fullName, String email, String password)
+    public void registerUser(@RequestBody RegisterBody body)
             throws UserAlreadyExistsException, InvalidFormatException {
         try {
-            userService.register(login, fullName, email, password);
+            userService.register(body.getLogin(), body.getFullName(), body.getEmail(), body.getPassword());
         } catch (NullPointerException e) {
             throw new InvalidFormatException();
         }
     }
 
     @PostMapping("/authenticate")
-    public Map<String, String> authenticateUser(String username, String password)
+    public Map<String, String> authenticateUser(@RequestBody AuthenticateBody body)
             throws InvalidFormatException, UserDoesntExistsException {
         try {
             userAuthenticationProviderService.authenticate(
-                    new UsernamePasswordAuthenticationToken(username, password));
+                    new UsernamePasswordAuthenticationToken(body.getUsername(), body.getPassword()));
         } catch (AuthenticationException e) {
             throw new InvalidFormatException();
         }
 
-        UserPrototype userPrototype = userRepository.findByLogin(username)
+        UserPrototype userPrototype = userRepository.findByLogin(body.getUsername())
                 .orElseThrow(UserDoesntExistsException::new);
 
         return Collections.singletonMap("token", jwtService.generateToken(userPrototype));
+    }
+
+    @Data
+    @AllArgsConstructor
+    @NoArgsConstructor
+    private static class RegisterBody {
+        private String login;
+        private String email;
+        private String fullName;
+        private String password;
+    }
+
+    @Data
+    @AllArgsConstructor
+    @NoArgsConstructor
+    private static class AuthenticateBody {
+        private String username;
+        private String password;
     }
 }
