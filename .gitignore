@@ -35,3 +35,6 @@ out/
 src/main/resources/static/**
 src/main/frontend/node_modules/
 src/main/frontend/package-lock.json
+
+### VGit secret keys ###
+secret_jwt.key
