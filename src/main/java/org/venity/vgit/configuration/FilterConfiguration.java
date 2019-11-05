@@ -4,6 +4,7 @@ import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.venity.vgit.filters.AuthorizationFilter;
+import org.venity.vgit.filters.GitURLFilter;
 import org.venity.vgit.repositories.UserRepository;
 import org.venity.vgit.services.JWTService;
 import org.venity.vgit.services.UserAuthenticationProviderService;
@@ -21,5 +22,13 @@ public class FilterConfiguration {
         filterRegistrationBean.setOrder(-101);
 
         return filterRegistrationBean;
+    }
+
+    @Bean
+    FilterRegistrationBean<GitURLFilter> gitURLFilterRegistrationBean() {
+        var registrationBean = new FilterRegistrationBean<>(new GitURLFilter());
+        registrationBean.setOrder(-99);
+
+        return registrationBean;
     }
 }

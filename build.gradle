@@ -24,6 +24,10 @@ dependencies {
     compile 'org.springframework.boot:spring-boot-starter-security'
     compile 'org.springframework.boot:spring-boot-starter-web'
 
+    // JGit
+    compile group: 'org.eclipse.jgit', name: 'org.eclipse.jgit', version: '5.5.1.201910021850-r'
+    compile group: 'org.eclipse.jgit', name: 'org.eclipse.jgit.http.server', version: '5.5.1.201910021850-r'
+
     compile group: 'org.yaml', name: 'snakeyaml', version: '1.25'
     compile group: 'commons-io', name: 'commons-io', version: '2.6'
     compile 'mysql:mysql-connector-java'

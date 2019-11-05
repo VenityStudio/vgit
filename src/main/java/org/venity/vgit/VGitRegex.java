@@ -7,4 +7,5 @@ public interface VGitRegex {
     Pattern EMAIL_PATTERN = Pattern.compile("^[\\w-_.+]*[\\w-_.]@([\\w]+\\.)+[\\w]+[\\w]$");
     Pattern FULLNAME_PATTERN = Pattern.compile(".{4,20}");
     Pattern PASSWORD_PATTERN = Pattern.compile("^(?=.*[A-Za-z])(?=.*\\d)[A-Za-z\\d]{8,}$");
+    Pattern GIT_URL_PATTERN = Pattern.compile("^/[A-Za-z0-9-_]+/[A-Za-z0-9-_]+\\.git/.+");
 }

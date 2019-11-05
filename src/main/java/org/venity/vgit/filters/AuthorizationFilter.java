@@ -2,9 +2,11 @@ package org.venity.vgit.filters;
 
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.SignatureException;
+import org.eclipse.jgit.transport.RemoteConfig;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.stereotype.Component;
+import org.venity.vgit.git.transport.GitHttpServlet;
 import org.venity.vgit.prototypes.UserPrototype;
 import org.venity.vgit.repositories.UserRepository;
 import org.venity.vgit.services.JWTService;
@@ -15,6 +17,7 @@ import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
 import java.util.Base64;
 
+import static org.venity.vgit.VGitRegex.GIT_URL_PATTERN;
 import static org.venity.vgit.configuration.FilterConfiguration.USER_SESSION_KEY;
 
 @Component
@@ -66,6 +69,30 @@ public class AuthorizationFilter implements Filter {
                     // Ignore
                 }
             }
+        }
+
+        if (!httpServletRequest.getRequestURI().startsWith(GitHttpServlet.REQUEST_URL)
+                && httpServletRequest.getRequestURI().contains(".git")) {
+
+            if (!GIT_URL_PATTERN.matcher(httpServletRequest.getRequestURI()).matches()) {
+                chain.doFilter(request, response);
+
+                return;
+            }
+
+            try {
+                if (httpServletRequest.getQueryString().contains(RemoteConfig.DEFAULT_RECEIVE_PACK)) {
+                    chain.doFilter(request, response);
+
+                    return;
+                }
+            } catch (NullPointerException e) {
+                // Ignore
+            }
+
+            httpServletRequest.getRequestDispatcher(GitHttpServlet.REQUEST_URL
+                    + httpServletRequest.getRequestURI()).forward(request, response);
+            return;
         }
 
         chain.doFilter(request, response);
