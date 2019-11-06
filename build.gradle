@@ -41,31 +41,3 @@ dependencies {
 test {
     useJUnitPlatform()
 }
-
-task npmInstall(type: Exec) {
-    workingDir 'src/main/frontend'
-    
-    if (org.gradle.internal.os.OperatingSystem.current().isWindows()) {
-        commandLine 'cmd', '/c', 'npm', 'install'
-    } else {
-        commandLine 'npm', 'install'
-    }
-}
-
-task npmBuild(type: Exec, dependsOn: npmInstall) {
-    workingDir 'src/main/frontend'
-
-    if (org.gradle.internal.os.OperatingSystem.current().isWindows()) {
-        commandLine 'cmd', '/c', 'npm', 'run-script', 'build'
-    } else {
-        commandLine 'npm', 'run-script', 'build'
-    }
-}
-
-task runWithFrontend(type: GradleBuild) {
-    tasks = ['npmBuild', 'bootRun']
-}
-
-task buildWithFrontend(type: GradleBuild) {
-    tasks = ['npmBuild', 'bootJar']
-}
