@@ -11,20 +11,20 @@ import org.venity.vgit.configuration.CryptoConfiguration;
 import org.venity.vgit.exceptions.InvalidFormatException;
 import org.venity.vgit.exceptions.UserAlreadyExistsException;
 import org.venity.vgit.prototypes.UserPrototype;
-import org.venity.vgit.repositories.UserRepository;
+import org.venity.vgit.repositories.UserCrudRepository;
 
 import java.security.MessageDigest;
 
 @ExtendWith(MockitoExtension.class)
 class UserServiceTest extends Assertions {
 
-    private UserRepository userRepository;
+    private UserCrudRepository userRepository;
     private ThreadLocal<MessageDigest> passwordDigest;
     private UserService userService;
 
     @BeforeEach
     void setUp() {
-        userRepository = Mockito.mock(UserRepository.class);
+        userRepository = Mockito.mock(UserCrudRepository.class);
         passwordDigest = new CryptoConfiguration().passwordDigest();
         userService = new UserService(userRepository, passwordDigest);
     }
