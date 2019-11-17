@@ -5,7 +5,7 @@ import org.springframework.stereotype.Service;
 import org.venity.vgit.exceptions.InvalidFormatException;
 import org.venity.vgit.exceptions.UserAlreadyExistsException;
 import org.venity.vgit.prototypes.UserPrototype;
-import org.venity.vgit.repositories.UserRepository;
+import org.venity.vgit.repositories.UserCrudRepository;
 
 import java.security.MessageDigest;
 import java.util.HashSet;
@@ -14,10 +14,10 @@ import static org.venity.vgit.VGitRegex.*;
 
 @Service
 public class UserService {
-    private final UserRepository userRepositories;
+    private final UserCrudRepository userRepositories;
     private final ThreadLocal<MessageDigest> passwordDigest;
 
-    public UserService(UserRepository userRepositories, ThreadLocal<MessageDigest> passwordDigest) {
+    public UserService(UserCrudRepository userRepositories, ThreadLocal<MessageDigest> passwordDigest) {
         this.userRepositories = userRepositories;
         this.passwordDigest = passwordDigest;
     }

@@ -6,18 +6,18 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.stereotype.Service;
 import org.venity.vgit.prototypes.UserPrototype;
-import org.venity.vgit.repositories.UserRepository;
+import org.venity.vgit.repositories.UserCrudRepository;
 
 import java.security.MessageDigest;
 import java.util.Arrays;
 
 @Service
 public class UserAuthenticationProviderService implements AuthenticationProvider {
-    private final UserRepository userRepository;
+    private final UserCrudRepository userRepository;
     private final ThreadLocal<MessageDigest> passwordDigest;
     private final String INVALID_USERNAME_OR_PASSWORD = "Invalid username or password";
 
-    public UserAuthenticationProviderService(UserRepository userRepository, ThreadLocal<MessageDigest> passwordDigest) {
+    public UserAuthenticationProviderService(UserCrudRepository userRepository, ThreadLocal<MessageDigest> passwordDigest) {
         this.userRepository = userRepository;
         this.passwordDigest = passwordDigest;
     }

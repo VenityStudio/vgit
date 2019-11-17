@@ -8,7 +8,7 @@ import org.springframework.security.core.AuthenticationException;
 import org.springframework.stereotype.Component;
 import org.venity.vgit.git.transport.GitHttpServlet;
 import org.venity.vgit.prototypes.UserPrototype;
-import org.venity.vgit.repositories.UserRepository;
+import org.venity.vgit.repositories.UserCrudRepository;
 import org.venity.vgit.services.JWTService;
 import org.venity.vgit.services.UserAuthenticationProviderService;
 
@@ -23,10 +23,10 @@ import static org.venity.vgit.configuration.FilterConfiguration.USER_SESSION_KEY
 @Component
 public class AuthorizationFilter implements Filter {
     private final JWTService jwtService;
-    private final UserRepository userRepository;
+    private final UserCrudRepository userRepository;
     private final UserAuthenticationProviderService userAuthenticationProviderService;
 
-    public AuthorizationFilter(JWTService jwtService, UserRepository userRepository, UserAuthenticationProviderService userAuthenticationProviderService) {
+    public AuthorizationFilter(JWTService jwtService, UserCrudRepository userRepository, UserAuthenticationProviderService userAuthenticationProviderService) {
         this.jwtService = jwtService;
         this.userRepository = userRepository;
         this.userAuthenticationProviderService = userAuthenticationProviderService;

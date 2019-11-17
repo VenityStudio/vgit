@@ -5,7 +5,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.venity.vgit.filters.AuthorizationFilter;
 import org.venity.vgit.filters.GitURLFilter;
-import org.venity.vgit.repositories.UserRepository;
+import org.venity.vgit.repositories.UserCrudRepository;
 import org.venity.vgit.services.JWTService;
 import org.venity.vgit.services.UserAuthenticationProviderService;
 
@@ -15,7 +15,7 @@ public class FilterConfiguration {
 
     @Bean
     public FilterRegistrationBean<AuthorizationFilter> authorizationFilterRegistrationBean(
-            JWTService jwtService, UserRepository userRepository,
+            JWTService jwtService, UserCrudRepository userRepository,
             UserAuthenticationProviderService userAuthenticationProviderService) {
         var filterRegistrationBean = new FilterRegistrationBean<>(
                 new AuthorizationFilter(jwtService, userRepository, userAuthenticationProviderService));
