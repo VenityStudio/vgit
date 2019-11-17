@@ -8,4 +8,5 @@ public interface VGitRegex {
     Pattern FULLNAME_PATTERN = Pattern.compile(".{4,20}");
     Pattern PASSWORD_PATTERN = Pattern.compile("^(?=.*[A-Za-z])(?=.*\\d)[A-Za-z\\d]{8,}$");
     Pattern GIT_URL_PATTERN = Pattern.compile("^/[A-Za-z0-9-_]+/[A-Za-z0-9-_]+\\.git/.+");
+    Pattern GIT_REPOSITORY_PATTERN = Pattern.compile("^(?=.{2,20}$)(?![_.])(?!.*[_.]{2})[a-zA-Z0-9._]+(?<![_.])$");
 }

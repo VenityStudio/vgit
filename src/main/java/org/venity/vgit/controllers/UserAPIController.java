@@ -64,12 +64,12 @@ public class UserAPIController extends AbstractController {
 
     @PostMapping("/authenticate")
     public Map<String, String> authenticateUser(@RequestBody AuthenticateBody body)
-            throws InvalidFormatException, UserDoesntExistsException {
+            throws UserDoesntExistsException {
         try {
             userAuthenticationProviderService.authenticate(
                     new UsernamePasswordAuthenticationToken(body.getUsername(), body.getPassword()));
         } catch (AuthenticationException e) {
-            throw new InvalidFormatException();
+            throw new UserDoesntExistsException();
         }
 
         UserPrototype userPrototype = userRepository.findByLogin(body.getUsername())
