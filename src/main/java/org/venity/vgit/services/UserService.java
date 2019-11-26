@@ -46,7 +46,7 @@ public class UserService {
         userPrototype.setLogin(login);
         userPrototype.setFullName(fullName);
         userPrototype.setEmail(email);
-        userPrototype.setRepositoriesIds(new HashSet<>());
+        userPrototype.setRepositories(new HashSet<>());
         userPrototype.setPasswordHash(passwordHash);
 
         userRepositories.save(userPrototype);

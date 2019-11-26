@@ -27,16 +27,16 @@ public class RepositoryPrototype {
     private String description;
 
     @NonNull
-    private Integer owner;
+    private String owner;
 
     @NonNull
     private Boolean confidential;
 
     @NonNull
-    @ElementCollection(targetClass = Integer.class, fetch = FetchType.EAGER)
-    private Set<Integer> maintainers;
+    @ElementCollection(targetClass = String.class, fetch = FetchType.EAGER)
+    private Set<String> maintainers;
 
     @NonNull
-    @ElementCollection(targetClass = Integer.class, fetch = FetchType.EAGER)
-    private Set<Integer> members;
+    @ElementCollection(targetClass = String.class, fetch = FetchType.EAGER)
+    private Set<String> members;
 }

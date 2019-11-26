@@ -30,8 +30,8 @@ public class UserPrototype implements Serializable {
     private String status;
 
     @NonNull
-    @ElementCollection(targetClass = Integer.class, fetch = FetchType.EAGER)
-    private Set<Integer> repositoriesIds;
+    @ElementCollection(targetClass = String.class, fetch = FetchType.EAGER)
+    private Set<String> repositories;
 
     @NonNull
     @JsonIgnore

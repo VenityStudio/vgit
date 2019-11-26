@@ -41,3 +41,4 @@ secret_jwt.key
 
 ### Development configuration ###
 configuration.dev.properties
+/storage/

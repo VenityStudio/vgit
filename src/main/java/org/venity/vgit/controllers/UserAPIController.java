@@ -35,15 +35,11 @@ public class UserAPIController extends AbstractController {
         this.jwtService = jwtService;
     }
 
-    @GetMapping("/{id}")
-    public UserPrototype getUser(@PathVariable String id) throws InvalidFormatException, UserDoesntExistsException {
-        try {
+    @GetMapping("/{name}")
+    public UserPrototype getUser(@PathVariable String name) throws UserDoesntExistsException {
             return userRepository
-                    .findById(Integer.parseInt(id))
+                    .findByLogin(name)
                     .orElseThrow(UserDoesntExistsException::new);
-        } catch (NumberFormatException e) {
-            throw new InvalidFormatException();
-        }
     }
 
     @GetMapping

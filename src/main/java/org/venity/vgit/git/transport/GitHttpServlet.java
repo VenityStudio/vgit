@@ -11,7 +11,6 @@ import org.venity.vgit.prototypes.UserPrototype;
 import org.venity.vgit.services.GitRepositoryService;
 
 import javax.servlet.http.HttpServletRequest;
-import java.util.NoSuchElementException;
 import java.util.Optional;
 import java.util.UUID;
 

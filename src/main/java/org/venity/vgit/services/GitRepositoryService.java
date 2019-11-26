@@ -1,19 +1,20 @@
 package org.venity.vgit.services;
 
+import com.jcraft.jsch.IO;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.IOUtils;
 import org.eclipse.jgit.api.Git;
 import org.eclipse.jgit.api.errors.GitAPIException;
 import org.eclipse.jgit.lib.Repository;
 import org.springframework.stereotype.Service;
 import org.venity.vgit.configuration.ApplicationConfiguration;
-import org.venity.vgit.exceptions.InvalidFormatException;
-import org.venity.vgit.exceptions.RepositoryAlreadyExistsException;
-import org.venity.vgit.exceptions.RepositoryCreateException;
-import org.venity.vgit.exceptions.RepositoryNotFoundException;
+import org.venity.vgit.exceptions.*;
 import org.venity.vgit.prototypes.RepositoryPrototype;
 import org.venity.vgit.prototypes.UserPrototype;
 import org.venity.vgit.repositories.RepositoryCrudRepository;
+import org.venity.vgit.repositories.UserCrudRepository;
 
 import java.io.File;
 import java.io.IOException;
@@ -24,10 +25,12 @@ import static org.venity.vgit.VGitRegex.GIT_REPOSITORY_PATTERN;
 @Service
 public class GitRepositoryService {
     private final RepositoryCrudRepository repositoryCrudRepository;
+    private final UserCrudRepository userCrudRepository;
     private final ApplicationConfiguration applicationConfiguration;
 
-    public GitRepositoryService(RepositoryCrudRepository repositoryCrudRepository, ApplicationConfiguration applicationConfiguration) {
+    public GitRepositoryService(RepositoryCrudRepository repositoryCrudRepository, UserCrudRepository userCrudRepository, ApplicationConfiguration applicationConfiguration) {
         this.repositoryCrudRepository = repositoryCrudRepository;
+        this.userCrudRepository = userCrudRepository;
         this.applicationConfiguration = applicationConfiguration;
     }
 
@@ -57,11 +60,16 @@ public class GitRepositoryService {
             repositoryPrototype.setDescription(description);
 
         repositoryPrototype.setNamespace(userPrototype.getLogin());
-        repositoryPrototype.setOwner(userPrototype.getId());
+        repositoryPrototype.setOwner(userPrototype.getLogin());
         repositoryPrototype.setMaintainers(new HashSet<>());
         repositoryPrototype.setMembers(new HashSet<>());
         repositoryPrototype.setConfidential(confidential);
 
+        var repos = userPrototype.getRepositories();
+        repos.add(repositoryPrototype.getNamespace() + "/" + repositoryPrototype.getName());
+        userPrototype.setRepositories(repos);
+
+        userCrudRepository.save(userPrototype);
         return repositoryCrudRepository.save(repositoryPrototype);
     }
 
@@ -74,7 +82,8 @@ public class GitRepositoryService {
         if (repositoryPrototype == null)
             return false;
 
-        if (type.equals(AccessType.PUSH) && userPrototype == null)
+        if ((type.equals(AccessType.PUSH)
+            || type.equals(AccessType.REPOSITORY_EDIT)) && userPrototype == null)
             return false;
 
         if (type.equals(AccessType.PULL) && !repositoryPrototype.getConfidential())
@@ -83,11 +92,14 @@ public class GitRepositoryService {
         if (userPrototype == null && repositoryPrototype.getConfidential())
             return false;
 
-        if (repositoryPrototype.getOwner().equals(userPrototype.getId()))
+        if (repositoryPrototype.getOwner().equals(userPrototype.getLogin()))
             return true;
 
-        return repositoryPrototype.getMaintainers().contains(userPrototype.getId())
-                || repositoryPrototype.getMembers().contains(userPrototype.getId());
+        if (type.equals(AccessType.REPOSITORY_EDIT))
+            return repositoryPrototype.getMaintainers().contains(userPrototype.getLogin());
+
+        return repositoryPrototype.getMaintainers().contains(userPrototype.getLogin())
+                || repositoryPrototype.getMembers().contains(userPrototype.getLogin());
     }
 
     public GitRepository resolve(String namespaceWithName) throws RepositoryNotFoundException {
@@ -100,6 +112,10 @@ public class GitRepositoryService {
         String name = namespaceWithName.substring(namespaceWithName.lastIndexOf("/") + 1);
         String namespace = namespaceWithName.substring(0, namespaceWithName.length() - name.length() - 1);
 
+        return resolve(namespace, name);
+    }
+
+    public GitRepository resolve(String namespace, String name) throws RepositoryNotFoundException {
         var prototype = repositoryCrudRepository.findByNameAndNamespace(name, namespace)
                 .orElseThrow(RepositoryNotFoundException::new);
 
@@ -108,6 +124,30 @@ public class GitRepositoryService {
         } catch (IOException e) {
             throw new RepositoryNotFoundException();
         }
+    }
+
+    public boolean delete(UserPrototype user, String namespace, String name) throws RepositoryNotFoundException, ForbiddenException {
+        GitRepository repository = resolve(namespace, name);
+
+        if (!canAccess(user, repository.getPrototype(), AccessType.REPOSITORY_EDIT))
+            throw new ForbiddenException();
+
+        try {
+            FileUtils.deleteDirectory(repository.getRepository().getDirectory());
+        } catch (IOException e) {
+            return false;
+        }
+
+        userCrudRepository.findByLogin(repository.getPrototype().getOwner()).ifPresent(userPrototype -> {
+            var repos = userPrototype.getRepositories();
+            repos.remove(namespace + "/" + name);
+            userPrototype.setRepositories(repos);
+            userCrudRepository.save(userPrototype);
+        });
+
+        repositoryCrudRepository.delete(repository.getPrototype());
+
+        return true;
     }
 
     @Getter
@@ -119,6 +159,7 @@ public class GitRepositoryService {
 
     public enum AccessType {
         PULL,
-        PUSH
+        PUSH,
+        REPOSITORY_EDIT
     }
 }
