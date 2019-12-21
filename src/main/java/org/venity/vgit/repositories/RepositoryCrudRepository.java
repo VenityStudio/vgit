@@ -8,5 +8,5 @@ import java.util.Optional;
 
 @Repository
 public interface RepositoryCrudRepository extends CrudRepository<RepositoryPrototype, Integer> {
-    Optional<RepositoryPrototype> findByNameAndNamespace(String name, String namespace);
+    Optional<RepositoryPrototype> findByNameAndProject(String name, String project);
 }

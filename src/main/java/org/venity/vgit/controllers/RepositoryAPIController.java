@@ -24,28 +24,27 @@ public class RepositoryAPIController extends AbstractController {
 
     @PostMapping
     public RepositoryPrototype create(HttpServletRequest httpServletRequest, @RequestBody CreateRepositoryBody body)
-            throws AuthorizationException, RepositoryAlreadyExistsException, InvalidFormatException, RepositoryCreateException {
+            throws AuthorizationException, RepositoryAlreadyExistsException, InvalidFormatException, RepositoryCreateException,
+            ForbiddenException, ProjectDoesntExistsException {
         UserPrototype userPrototype = getAuthorization(httpServletRequest)
                 .orElseThrow(AuthorizationException::new);
 
         return gitRepositoryService
-                .create(userPrototype, body.getName(), body.getDescription(), body.getConfidential());
+                .create(userPrototype, body.getName(), body.getProject(), body.getDescription(), body.getConfidential());
     }
 
-    @GetMapping("/{namespace}/{name}")
-    public RepositoryPrototype get(@PathVariable String namespace,
-                                   @PathVariable String name) throws RepositoryNotFoundException {
+    @GetMapping("/{repositoryId}")
+    public RepositoryPrototype get(@PathVariable String repositoryId) throws RepositoryNotFoundException {
         return gitRepositoryService
-                .resolve(namespace, name)
+                .resolve(Integer.parseInt(repositoryId))
                 .getPrototype();
     }
 
-    @DeleteMapping("/{namespace}/{name}")
-    public Map<String, Boolean> delete(HttpServletRequest request, @PathVariable String namespace,
-                      @PathVariable String name) throws UserDoesntExistsException, RepositoryNotFoundException, ForbiddenException {
+    @DeleteMapping("/{repositoryId}")
+    public Map<String, Boolean> delete(HttpServletRequest request, @PathVariable String repositoryId)
+            throws UserDoesntExistsException, RepositoryNotFoundException, ForbiddenException, ProjectDoesntExistsException {
         return Collections.singletonMap("status", gitRepositoryService
-                .delete(getAuthorization(request).orElseThrow(UserDoesntExistsException::new),
-                        namespace, name));
+                .delete(getAuthorization(request).orElseThrow(UserDoesntExistsException::new), gitRepositoryService.resolve(Integer.parseInt(repositoryId))));
     }
 
     @Data
@@ -54,6 +53,7 @@ public class RepositoryAPIController extends AbstractController {
     private static class CreateRepositoryBody {
         private String name;
         private String description;
+        private String project;
         private Boolean confidential;
     }
 }

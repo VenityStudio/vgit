@@ -7,10 +7,10 @@ import lombok.NonNull;
 import javax.persistence.*;
 import java.util.Set;
 
-@Data
 @Entity
+@Data
 @NoArgsConstructor
-public class RepositoryPrototype {
+public class ProjectPrototype {
 
     @Id
     @NonNull
@@ -18,18 +18,14 @@ public class RepositoryPrototype {
     private Integer id;
 
     @NonNull
-    private String project;
-
-    @NonNull
     private String name;
 
-    @NonNull
     private String description;
-
-    @NonNull
-    private Boolean confidential;
 
     @NonNull
     @ElementCollection(targetClass = String.class, fetch = FetchType.EAGER)
     private Set<String> members;
+
+    @ElementCollection(targetClass = Integer.class, fetch = FetchType.EAGER)
+    private Set<Integer> repositories;
 }
