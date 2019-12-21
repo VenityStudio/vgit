@@ -7,6 +7,8 @@ import lombok.NonNull;
 
 import javax.persistence.*;
 import java.io.Serializable;
+import java.security.PublicKey;
+import java.util.Map;
 import java.util.Set;
 
 @Entity
@@ -32,6 +34,11 @@ public class UserPrototype implements Serializable {
     @NonNull
     @ElementCollection(targetClass = String.class, fetch = FetchType.EAGER)
     private Set<String> repositories;
+
+    @JsonIgnore
+    @ElementCollection(targetClass = PublicKey.class, fetch = FetchType.EAGER)
+    @Column(length = 1000)
+    private Map<String, PublicKey> publicKeys;
 
     @NonNull
     @JsonIgnore

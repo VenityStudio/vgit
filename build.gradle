@@ -28,6 +28,10 @@ dependencies {
     compile group: 'org.eclipse.jgit', name: 'org.eclipse.jgit', version: '5.5.1.201910021850-r'
     compile group: 'org.eclipse.jgit', name: 'org.eclipse.jgit.http.server', version: '5.5.1.201910021850-r'
 
+    // ssh
+    compile group: 'org.apache.sshd', name: 'sshd-core', version: '2.3.0'
+    compile group: 'com.github.fommil', name: 'openssh', version: '1.0'
+
     compile group: 'org.yaml', name: 'snakeyaml', version: '1.25'
     compile group: 'commons-io', name: 'commons-io', version: '2.6'
     compile 'mysql:mysql-connector-java'
