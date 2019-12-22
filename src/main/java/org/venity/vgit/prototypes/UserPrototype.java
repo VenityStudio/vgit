@@ -43,5 +43,4 @@ public class UserPrototype implements Serializable {
     @NonNull
     @JsonIgnore
     private byte[] passwordHash;
-    private int avatarId = 0;
 }
