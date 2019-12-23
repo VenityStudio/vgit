@@ -56,6 +56,7 @@ public class GitReceivePack extends ReceivePack {
                         template.postForLocation(hookPrototype.getUrl(), new HashMap<String, Object>() {{
                             put("type", "PUSH");
                             put("data", data);
+                            put("repository", into.getPrototype());
                         }});
                     } catch (Exception e) {
                         // Ignore
