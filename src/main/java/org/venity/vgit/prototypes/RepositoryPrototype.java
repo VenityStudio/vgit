@@ -1,5 +1,6 @@
 package org.venity.vgit.prototypes;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
@@ -32,4 +33,8 @@ public class RepositoryPrototype {
     @NonNull
     @ElementCollection(targetClass = String.class, fetch = FetchType.EAGER)
     private Set<String> members;
+
+    @JsonIgnore
+    @ElementCollection(targetClass = HookPrototype.class, fetch = FetchType.EAGER)
+    private Set<HookPrototype> hooks;
 }

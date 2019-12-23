@@ -1,6 +1,7 @@
 package org.venity.vgit.controllers;
 
 import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.venity.vgit.exceptions.InvalidFormatException;
 import org.venity.vgit.exceptions.RedirectException;
 import org.venity.vgit.prototypes.UserPrototype;
 
@@ -21,5 +22,10 @@ abstract public class AbstractController {
     @ExceptionHandler(RedirectException.class)
     public void redirect(HttpServletResponse response, RedirectException exception) throws IOException {
         response.sendRedirect(exception.getUrl());
+    }
+
+    @ExceptionHandler(NumberFormatException.class)
+    public void numberFormatException() throws InvalidFormatException {
+        throw new InvalidFormatException();
     }
 }

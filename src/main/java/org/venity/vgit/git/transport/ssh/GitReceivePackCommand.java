@@ -2,9 +2,9 @@ package org.venity.vgit.git.transport.ssh;
 
 import lombok.extern.slf4j.Slf4j;
 import org.apache.sshd.server.command.AbstractCommandSupport;
-import org.eclipse.jgit.transport.ReceivePack;
 import org.eclipse.jgit.transport.RemoteConfig;
 import org.venity.vgit.exceptions.RepositoryNotFoundException;
+import org.venity.vgit.git.transport.GitReceivePack;
 import org.venity.vgit.prototypes.UserPrototype;
 import org.venity.vgit.services.GitRepositoryService;
 
@@ -45,7 +45,7 @@ public class GitReceivePackCommand extends AbstractCommandSupport {
         }
 
         try {
-            new ReceivePack(repository.getRepository()).receive(getInputStream(),
+            new GitReceivePack(repository).receive(getInputStream(),
                     getOutputStream(), getErrorStream());
             onExit(0);
         } catch (IOException e) {

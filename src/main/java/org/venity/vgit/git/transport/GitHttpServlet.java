@@ -6,7 +6,6 @@ import org.eclipse.jgit.lib.Repository;
 import org.eclipse.jgit.transport.ReceivePack;
 import org.eclipse.jgit.transport.resolver.ServiceNotAuthorizedException;
 import org.springframework.stereotype.Component;
-import org.venity.vgit.prototypes.RepositoryPrototype;
 import org.venity.vgit.prototypes.UserPrototype;
 import org.venity.vgit.services.GitRepositoryService;
 
@@ -29,17 +28,15 @@ public class GitHttpServlet extends GitServlet {
         this.gitRepositoryService = gitRepositoryService;
         setRepositoryResolver(this::repositoryResolver);
         setReceivePackFactory(this::receivePackFactory);
-
-        // TODO: make git-upload-pack
     }
 
     private ReceivePack receivePackFactory(HttpServletRequest request, Repository repository) throws ServiceNotAuthorizedException {
         UserPrototype userPrototype = authorizeUser(request)
                 .orElseThrow(ServiceNotAuthorizedException::new);
-        RepositoryPrototype prototype = (RepositoryPrototype) request.getSession(true).getAttribute(REPOSITORY_PROTOTYPE_KEY);
+        var gitRepository = (GitRepositoryService.GitRepository) request.getSession(true).getAttribute(REPOSITORY_PROTOTYPE_KEY);
 
-        if (gitRepositoryService.canAccess(userPrototype, prototype, GitRepositoryService.AccessType.PUSH))
-            return new ReceivePack(repository);
+        if (gitRepositoryService.canAccess(userPrototype, gitRepository.getPrototype(), GitRepositoryService.AccessType.PUSH))
+            return new GitReceivePack(gitRepository);
 
         throw new ServiceNotAuthorizedException();
     }
@@ -51,7 +48,7 @@ public class GitHttpServlet extends GitServlet {
             var repository = gitRepositoryService.resolve(s);
 
             if (gitRepositoryService.canAccess(userPrototype.orElse(null), repository.getPrototype(), GitRepositoryService.AccessType.PULL)) {
-                request.getSession(true).setAttribute(REPOSITORY_PROTOTYPE_KEY, repository.getPrototype());
+                request.getSession(true).setAttribute(REPOSITORY_PROTOTYPE_KEY, repository);
                 return repository.getRepository();
             } else throw new ServiceNotAuthorizedException();
         } catch (org.venity.vgit.exceptions.RepositoryNotFoundException e) {
