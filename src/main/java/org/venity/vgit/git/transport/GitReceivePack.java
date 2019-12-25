@@ -2,14 +2,14 @@ package org.venity.vgit.git.transport;
 
 import lombok.extern.slf4j.Slf4j;
 import org.eclipse.jgit.api.Git;
+import org.eclipse.jgit.lib.PersonIdent;
 import org.eclipse.jgit.transport.ReceiveCommand;
 import org.eclipse.jgit.transport.ReceivePack;
 import org.springframework.web.client.RestTemplate;
-import org.venity.vgit.prototypes.HookPrototype;
 import org.venity.vgit.services.GitRepositoryService;
 
+import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.HashSet;
 
 @Slf4j
 public class GitReceivePack extends ReceivePack {
@@ -22,36 +22,42 @@ public class GitReceivePack extends ReceivePack {
     public GitReceivePack(GitRepositoryService.GitRepository into) {
         super(into.getRepository());
 
-        setPostReceiveHook((rp, commands) -> into.getPrototype().getHooks().forEach(hookPrototype -> {
+        setPostReceiveHook((rp, commands) -> {
             new Thread(() -> {
-                if (hookPrototype.getType().equals(HookPrototype.HookType.PUSH)) {
-                    var template = new RestTemplate();
-                    var data = new HashSet<HashMap<String, Object>>();
+                var template = new RestTemplate();
+                var data = new ArrayList<HashMap<String, Object>>();
 
-                    commands.iterator().forEachRemaining(receiveCommand -> {
-                        try {
-                            var logCommand = Git.wrap(into.getRepository()).log();
+                commands.iterator().forEachRemaining(receiveCommand -> {
+                    try {
+                        var logCommand = Git.wrap(into.getRepository()).log();
 
-                            if (receiveCommand.getType().equals(ReceiveCommand.Type.UPDATE)) {
-                                logCommand = logCommand.addRange(receiveCommand.getOldId(), receiveCommand.getNewId());
-                            }
-
-                            if (receiveCommand.getType().equals(ReceiveCommand.Type.CREATE)) {
-                                logCommand = logCommand.add(receiveCommand.getNewId());
-                            }
-
-                            logCommand.call().forEach(revCommit -> {
-                                data.add(new HashMap<>() {{
-                                    put("commit", revCommit.getName());
-                                    put("author", revCommit.getAuthorIdent());
-                                    put("message", revCommit.getFullMessage());
-                                }});
-                            });
-                        } catch (Exception e) {
-                            log.error("jGit error", e);
+                        if (receiveCommand.getType().equals(ReceiveCommand.Type.UPDATE)) {
+                            logCommand = logCommand.addRange(receiveCommand.getOldId(), receiveCommand.getNewId());
                         }
-                    });
 
+                        if (receiveCommand.getType().equals(ReceiveCommand.Type.CREATE)) {
+                            logCommand = logCommand.add(receiveCommand.getNewId());
+                        }
+
+                        logCommand.call().forEach(revCommit -> {
+                            data.add(new HashMap<>() {{
+                                put("commit", revCommit.getName());
+                                put("author", revCommit.getAuthorIdent());
+                                put("message", revCommit.getFullMessage());
+                            }});
+                        });
+                    } catch (Exception e) {
+                        log.error("jGit error", e);
+                    }
+                });
+
+                data.sort((o1, o2) -> {
+                    var pi1 = (PersonIdent) o1.get("author");
+                    var pi2 = (PersonIdent) o2.get("author");
+                    return (int) (pi1.getWhen().getTime() - pi2.getWhen().getTime());
+                });
+
+                into.getPrototype().getHooks().forEach(hookPrototype -> {
                     try {
                         template.postForLocation(hookPrototype.getUrl(), new HashMap<String, Object>() {{
                             put("type", "PUSH");
@@ -61,8 +67,8 @@ public class GitReceivePack extends ReceivePack {
                     } catch (Exception e) {
                         // Ignore
                     }
-                }
+                });
             }).start();
-        }));
+        });
     }
 }
