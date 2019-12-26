@@ -32,6 +32,10 @@ dependencies {
     compile group: 'org.apache.sshd', name: 'sshd-core', version: '2.3.0'
     compile group: 'com.github.fommil', name: 'openssh', version: '1.0'
 
+    // Swagger
+    compile group: 'io.springfox', name: 'springfox-swagger2', version: '2.9.2'
+    compile group: 'io.springfox', name: 'springfox-swagger-ui', version: '2.9.2'
+
     compile group: 'org.yaml', name: 'snakeyaml', version: '1.25'
     compile group: 'commons-io', name: 'commons-io', version: '2.6'
     compile 'mysql:mysql-connector-java'
