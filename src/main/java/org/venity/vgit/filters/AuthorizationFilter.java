@@ -1,6 +1,7 @@
 package org.venity.vgit.filters;
 
 import org.eclipse.jgit.transport.RemoteConfig;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.stereotype.Component;
 import org.venity.vgit.git.transport.GitHttpServlet;
@@ -57,10 +58,12 @@ public class AuthorizationFilter implements Filter {
                 String login = decodedToken.split(":", 2)[0];
                 String password = decodedToken.split(":", 2)[1];
 
-                UserService.UserAuthenticationToken token = new UserService.UserAuthenticationToken(login, password);
-
                 try {
-                    userService.authenticate(token);
+                    UserService.UserAuthenticationToken token =
+                            (UserService.UserAuthenticationToken) userService.authenticate(
+                                    new UsernamePasswordAuthenticationToken(login, password)
+                            );
+
                     servletRequest.setAttribute(USER_SESSION_KEY, token.getUserPrototype());
                 } catch (AuthenticationException ex) {
                     // Ignore
@@ -73,6 +76,7 @@ public class AuthorizationFilter implements Filter {
         if (!requestUri.startsWith(GitHttpServlet.REQUEST_URL) && requestUri.contains(".git")) {
             String queryString = servletRequest.getQueryString();
 
+            // Checking that user pushing new changes
             if (!GIT_URL_PATTERN.matcher(requestUri).matches() ||
                     (queryString != null && queryString.contains(RemoteConfig.DEFAULT_RECEIVE_PACK))) {
 
