@@ -7,7 +7,7 @@ import org.venity.vgit.filters.AuthorizationFilter;
 import org.venity.vgit.filters.GitURLFilter;
 import org.venity.vgit.repositories.UserCrudRepository;
 import org.venity.vgit.services.JWTService;
-import org.venity.vgit.services.UserAuthenticationProviderService;
+import org.venity.vgit.services.UserService;
 
 @Configuration
 public class FilterConfiguration {
@@ -16,9 +16,9 @@ public class FilterConfiguration {
     @Bean
     public FilterRegistrationBean<AuthorizationFilter> authorizationFilterRegistrationBean(
             JWTService jwtService, UserCrudRepository userRepository,
-            UserAuthenticationProviderService userAuthenticationProviderService) {
+            UserService userService) {
         var filterRegistrationBean = new FilterRegistrationBean<>(
-                new AuthorizationFilter(jwtService, userRepository, userAuthenticationProviderService));
+                new AuthorizationFilter(jwtService, userRepository, userService));
         filterRegistrationBean.setOrder(-101);
 
         return filterRegistrationBean;

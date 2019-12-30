@@ -5,7 +5,8 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.*;
+import org.mockito.ArgumentMatchers;
+import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.venity.vgit.configuration.CryptoConfiguration;
 import org.venity.vgit.exceptions.InvalidFormatException;
@@ -35,53 +36,38 @@ class UserServiceTest extends Assertions {
     }
 
     @Test
-    void testThatUserNotRegisteredWhenItExists() {
+    void testRegisteringWhenReceivedInvalidData() {
+        assertThrows(InvalidFormatException.class, () ->
+                userService.register("§", "§", "§", "§")
+        );
+
+        Mockito.verify(userRepository, Mockito.never()).save(Mockito.any());
+    }
+
+    @Test
+    void testRegisteringWhenUserCreated() {
         Mockito.when(userRepository.existsByLoginOrEmail(Mockito.anyString(), Mockito.anyString())).thenReturn(true);
 
-        try {
-            userService.register("TestUser", "Test Testovich", "test@test.by", "SuperSecretPassword1");
-            fail();
-        } catch (InvalidFormatException e) {
-            fail();
-        } catch (UserAlreadyExistsException e) {
-            // OK!
-        }
+        assertThrows(UserAlreadyExistsException.class, () ->
+                userService.register("test1", "Test Testovich", "maksim182003mit@gmail.com", "SuperSecretPassword1")
+        );
+
+        Mockito.verify(userRepository, Mockito.never()).save(Mockito.any());
     }
 
     @Test
-    void testThatUserNotRegisteredWhenInputDataAreInvalid() {
+    void testRegisteringWhenAllInNormal() throws UserAlreadyExistsException, InvalidFormatException {
         Mockito.when(userRepository.existsByLoginOrEmail(Mockito.anyString(), Mockito.anyString())).thenReturn(false);
 
-        try {
-            userService.register("§", "§", "§", "§");
-            fail();
-        } catch (UserAlreadyExistsException e) {
-            fail();
-        } catch (InvalidFormatException e) {
-            // OK!
-        }
-    }
-
-    @Test
-    void testThatUserRegisteredWhenAllDataAreValid() {
-        Mockito.when(userRepository.existsByLoginOrEmail(Mockito.anyString(), Mockito.anyString())).thenReturn(false);
-
-        try {
-            userService.register("test1", "Test Testovich", "maksim182003mit@gmail.com", "SuperSecretPassword1");
-        } catch (InvalidFormatException | UserAlreadyExistsException e) {
-            fail();
-        }
-
-        var validPasswordHash = passwordDigest.get().digest("SuperSecretPassword1".getBytes());
-        var validUserPrototype = new UserPrototype();
-
-        validUserPrototype.setLogin("test1");
-        validUserPrototype.setFullName("Test Testovich");
-        validUserPrototype.setEmail("maksim182003mit@gmail.com");
-        validUserPrototype.setPasswordHash(validPasswordHash);
+        userService.register("test1", "Test Testovich", "maksim182003mit@gmail.com", "SuperSecretPassword1");
 
         Mockito.verify(userRepository).save(ArgumentMatchers.argThat(argument -> {
-            validUserPrototype.setRepositoriesIds(argument.getRepositoriesIds());
+            var validUserPrototype = new UserPrototype();
+
+            validUserPrototype.setLogin("test1");
+            validUserPrototype.setFullName("Test Testovich");
+            validUserPrototype.setEmail("maksim182003mit@gmail.com");
+            validUserPrototype.setPasswordHash(passwordDigest.get().digest("SuperSecretPassword1".getBytes()));
 
             return validUserPrototype.equals(argument);
         }));

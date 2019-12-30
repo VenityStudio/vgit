@@ -6,20 +6,20 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.config.http.SessionCreationPolicy;
-import org.venity.vgit.services.UserAuthenticationProviderService;
+import org.venity.vgit.services.UserService;
 
 @Configuration
 @EnableWebSecurity
 public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
-    private final UserAuthenticationProviderService userAuthenticationProviderService;
+    private final UserService userService;
 
-    public SecurityConfiguration(UserAuthenticationProviderService userAuthenticationProviderService) {
-        this.userAuthenticationProviderService = userAuthenticationProviderService;
+    public SecurityConfiguration(UserService userService) {
+        this.userService = userService;
     }
 
     @Override
     protected void configure(AuthenticationManagerBuilder auth) throws Exception {
-        auth.authenticationProvider(userAuthenticationProviderService);
+        auth.authenticationProvider(userService);
     }
 
     @Override

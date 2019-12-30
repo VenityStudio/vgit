@@ -13,7 +13,6 @@ import org.venity.vgit.exceptions.UserDoesntExistsException;
 import org.venity.vgit.prototypes.UserPrototype;
 import org.venity.vgit.repositories.UserCrudRepository;
 import org.venity.vgit.services.JWTService;
-import org.venity.vgit.services.UserAuthenticationProviderService;
 import org.venity.vgit.services.UserService;
 
 import javax.servlet.http.HttpServletRequest;
@@ -25,13 +24,11 @@ import java.util.Map;
 public class UserAPIController extends AbstractController {
     private final UserCrudRepository userRepository;
     private final UserService userService;
-    private final UserAuthenticationProviderService userAuthenticationProviderService;
     private final JWTService jwtService;
 
-    public UserAPIController(UserCrudRepository userRepository, UserService userService, UserAuthenticationProviderService userAuthenticationProviderService, JWTService jwtService) {
+    public UserAPIController(UserCrudRepository userRepository, UserService userService, JWTService jwtService) {
         this.userRepository = userRepository;
         this.userService = userService;
-        this.userAuthenticationProviderService = userAuthenticationProviderService;
         this.jwtService = jwtService;
     }
 
@@ -62,13 +59,14 @@ public class UserAPIController extends AbstractController {
     public Map<String, String> authenticateUser(@RequestBody AuthenticateBody body)
             throws UserDoesntExistsException {
         try {
-            userAuthenticationProviderService.authenticate(
+            userService.authenticate(
                     new UsernamePasswordAuthenticationToken(body.getUsername(), body.getPassword()));
         } catch (AuthenticationException e) {
             throw new UserDoesntExistsException();
         }
 
-        UserPrototype userPrototype = userRepository.findByLogin(body.getUsername())
+        UserPrototype userPrototype = userRepository
+                .findByLogin(body.getUsername())
                 .orElseThrow(UserDoesntExistsException::new);
 
         return Collections.singletonMap("token", jwtService.generateToken(userPrototype));
