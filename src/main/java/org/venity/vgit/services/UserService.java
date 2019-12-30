@@ -62,7 +62,7 @@ public class UserService implements AuthenticationProvider {
         var passwordBytes = ((String) password).getBytes();
         var passwordHash = passwordDigest.get().digest(passwordBytes);
         var userPrototype = userRepositories
-                .findLoginAndPasswordHash(name, passwordHash)
+                .findByLoginAndPasswordHash(name, passwordHash)
                 .orElseThrow(() -> new BadCredentialsException("Invalid username or password"));
 
         return new UserAuthenticationToken(name, password, userPrototype);

@@ -9,6 +9,6 @@ import java.util.Optional;
 @Repository
 public interface UserCrudRepository extends CrudRepository<UserPrototype, Integer> {
     boolean existsByLoginOrEmail(String login, String email);
-    Optional<UserPrototype> findLoginAndPasswordHash(String login, byte[] passwordHash);
+    Optional<UserPrototype> findByLoginAndPasswordHash(String login, byte[] passwordHash);
     Optional<UserPrototype> findByLogin(String login);
 }
