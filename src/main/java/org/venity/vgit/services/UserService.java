@@ -13,6 +13,7 @@ import org.venity.vgit.prototypes.UserPrototype;
 import org.venity.vgit.repositories.UserCrudRepository;
 
 import java.security.MessageDigest;
+import java.util.Optional;
 
 import static org.venity.vgit.VGitRegex.*;
 
@@ -52,20 +53,25 @@ public class UserService implements AuthenticationProvider {
 
     @Override
     public Authentication authenticate(Authentication authentication) throws AuthenticationException {
+        Optional<UserPrototype> userPrototype;
+
         var name = authentication.getName();
         var password = authentication.getCredentials();
 
-        if (!(password instanceof String)) {
-            throw new BadCredentialsException("Invalid username or password");
+        if (password instanceof String) {
+            var passwordBytes = ((String) password).getBytes();
+            var passwordHash = passwordDigest.get().digest(passwordBytes);
+
+            userPrototype = userRepositories.findByLoginAndPasswordHash(name, passwordHash);
+        } else {
+            userPrototype = userRepositories.findByLogin(name);
         }
 
-        var passwordBytes = ((String) password).getBytes();
-        var passwordHash = passwordDigest.get().digest(passwordBytes);
-        var userPrototype = userRepositories
-                .findByLoginAndPasswordHash(name, passwordHash)
-                .orElseThrow(() -> new BadCredentialsException("Invalid username or password"));
-
-        return new UserAuthenticationToken(name, password, userPrototype);
+        return new UserAuthenticationToken(
+                name,
+                password,
+                userPrototype.orElseThrow(() -> new BadCredentialsException("Invalid username or password"))
+        );
     }
 
     @Override
