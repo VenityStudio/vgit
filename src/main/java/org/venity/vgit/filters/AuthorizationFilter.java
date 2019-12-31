@@ -71,20 +71,25 @@ public class AuthorizationFilter implements Filter {
             }
         }
 
-        String requestUri = servletRequest.getRequestURI();
+        if (!servletRequest.getRequestURI().startsWith(GitHttpServlet.REQUEST_URL)
+                && servletRequest.getRequestURI().contains(".git")) {
 
-        if (!requestUri.startsWith(GitHttpServlet.REQUEST_URL) && requestUri.contains(".git")) {
-            String queryString = servletRequest.getQueryString();
-
-            // Checking that user pushing new changes
-            if (!GIT_URL_PATTERN.matcher(requestUri).matches() ||
-                    (queryString != null && queryString.contains(RemoteConfig.DEFAULT_RECEIVE_PACK))) {
-
+            if (!GIT_URL_PATTERN.matcher(servletRequest.getRequestURI()).matches()) {
                 chain.doFilter(request, response);
                 return;
             }
 
-            servletRequest.getRequestDispatcher(GitHttpServlet.REQUEST_URL + requestUri).forward(request, response);
+            try {
+                if (servletRequest.getQueryString().contains(RemoteConfig.DEFAULT_RECEIVE_PACK)) {
+                    chain.doFilter(request, response);
+                    return;
+                }
+            } catch (NullPointerException e) {
+                // Ignore
+            }
+
+            servletRequest.getRequestDispatcher(GitHttpServlet.REQUEST_URL
+                    + servletRequest.getRequestURI()).forward(request, response);
             return;
         }
 
