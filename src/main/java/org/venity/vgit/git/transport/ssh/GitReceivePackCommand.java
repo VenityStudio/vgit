@@ -16,7 +16,8 @@ public class GitReceivePackCommand extends AbstractCommandSupport {
     private final GitRepositoryService gitRepositoryService;
     private final UserPrototype userPrototype;
 
-    public GitReceivePackCommand(String command, GitRepositoryService gitRepositoryService, UserPrototype userPrototype) {
+    public GitReceivePackCommand(String command,
+                                 GitRepositoryService gitRepositoryService, UserPrototype userPrototype) {
         super(command, null);
         this.gitRepositoryService = gitRepositoryService;
         this.userPrototype = userPrototype;
@@ -45,7 +46,7 @@ public class GitReceivePackCommand extends AbstractCommandSupport {
         }
 
         try {
-            new GitReceivePack(repository).receive(getInputStream(),
+            new GitReceivePack(repository, gitRepositoryService).receive(getInputStream(),
                     getOutputStream(), getErrorStream());
             onExit(0);
         } catch (IOException e) {

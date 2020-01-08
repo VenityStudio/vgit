@@ -10,6 +10,7 @@ import org.venity.vgit.repositories.ProjectCrudRepository;
 import org.venity.vgit.repositories.UserCrudRepository;
 
 import javax.servlet.http.HttpServletRequest;
+import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.HashSet;
 
@@ -27,6 +28,7 @@ public class ProjectAPIController extends AbstractController {
     @PostMapping
     public ProjectPrototype create(HttpServletRequest httpServletRequest, @RequestBody ProjectCreateBody body)
             throws AuthorizationException, ProjectAlreadyExistsException, InvalidFormatException {
+        // TODO: move this code to service
         UserPrototype userPrototype = getAuthorization(httpServletRequest)
                 .orElseThrow(AuthorizationException::new);
         if (projectCrudRepository.existsByName(body.getName()))
@@ -40,6 +42,8 @@ public class ProjectAPIController extends AbstractController {
         projectPrototype.setDescription(body.getDescription());
         projectPrototype.setMembers(Collections.singleton(userPrototype.getLogin()));
         projectPrototype.setRepositories(new HashSet<>());
+        projectPrototype.setCreationDate(LocalDateTime.now());
+        projectPrototype.setLastUpdateDate(projectPrototype.getCreationDate());
 
         projectPrototype = projectCrudRepository.save(projectPrototype);
 

@@ -1,11 +1,13 @@
 package org.venity.vgit.prototypes;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
 
 import javax.persistence.*;
+import java.time.LocalDateTime;
 import java.util.Set;
 
 @Data
@@ -29,6 +31,12 @@ public class RepositoryPrototype {
 
     @NonNull
     private Boolean confidential;
+
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
+    private LocalDateTime creationDate;
+
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
+    private LocalDateTime lastUpdateDate;
 
     @NonNull
     @ElementCollection(targetClass = String.class, fetch = FetchType.EAGER)

@@ -16,6 +16,7 @@ import org.venity.vgit.prototypes.UserPrototype;
 import org.venity.vgit.repositories.UserCrudRepository;
 
 import java.security.MessageDigest;
+import java.time.LocalDateTime;
 import java.util.Optional;
 import java.util.regex.Pattern;
 
@@ -50,6 +51,8 @@ public class UserService implements AuthenticationProvider {
         userPrototype.setEmail(email);
         userPrototype.setFullName(fullName);
         userPrototype.setPasswordHash(passwordHash);
+        userPrototype.setCreationDate(LocalDateTime.now());
+        userPrototype.setLastUpdateDate(userPrototype.getCreationDate());
 
         userRepositories.save(userPrototype);
     }
@@ -93,6 +96,7 @@ public class UserService implements AuthenticationProvider {
             original.setPasswordHash(passwordDigest.get().digest(password.getBytes()));
         }
 
+        original.setLastUpdateDate(LocalDateTime.now());
         return userRepositories.save(original);
     }
 

@@ -7,6 +7,7 @@ import org.eclipse.jgit.transport.ReceivePack;
 import org.eclipse.jgit.transport.resolver.ServiceNotAuthorizedException;
 import org.springframework.stereotype.Component;
 import org.venity.vgit.prototypes.UserPrototype;
+import org.venity.vgit.repositories.RepositoryCrudRepository;
 import org.venity.vgit.services.GitRepositoryService;
 
 import javax.servlet.http.HttpServletRequest;
@@ -36,7 +37,7 @@ public class GitHttpServlet extends GitServlet {
         var gitRepository = (GitRepositoryService.GitRepository) request.getSession(true).getAttribute(REPOSITORY_PROTOTYPE_KEY);
 
         if (gitRepositoryService.canAccess(userPrototype, gitRepository.getPrototype(), GitRepositoryService.AccessType.PUSH))
-            return new GitReceivePack(gitRepository);
+            return new GitReceivePack(gitRepository, gitRepositoryService);
 
         throw new ServiceNotAuthorizedException();
     }

@@ -1,5 +1,6 @@
 package org.venity.vgit.prototypes;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -8,6 +9,7 @@ import lombok.NonNull;
 import javax.persistence.*;
 import java.io.Serializable;
 import java.security.PublicKey;
+import java.time.LocalDateTime;
 import java.util.Map;
 import java.util.Set;
 
@@ -35,6 +37,12 @@ public class UserPrototype implements Serializable {
     private String bio;
 
     private Gender gender = Gender.UNDEFINED;
+
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
+    private LocalDateTime creationDate;
+
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
+    private LocalDateTime lastUpdateDate;
 
     @NonNull
     @ElementCollection(targetClass = Integer.class, fetch = FetchType.EAGER)

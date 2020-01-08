@@ -29,7 +29,9 @@ public class SSHService {
     private final UserCrudRepository userCrudRepository;
     private final SshServer server;
 
-    public SSHService(ApplicationConfiguration configuration, GitRepositoryService gitRepositoryService, UserCrudRepository userCrudRepository) throws IOException {
+    public SSHService(ApplicationConfiguration configuration, GitRepositoryService gitRepositoryService,
+                      UserCrudRepository userCrudRepository)
+            throws IOException {
         this.gitRepositoryService = gitRepositoryService;
         this.userCrudRepository = userCrudRepository;
 

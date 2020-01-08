@@ -19,10 +19,12 @@ public class GitReceivePack extends ReceivePack {
      *
      * @param into the destination repository.
      */
-    public GitReceivePack(GitRepositoryService.GitRepository into) {
+    public GitReceivePack(GitRepositoryService.GitRepository into, GitRepositoryService gitRepositoryService) {
         super(into.getRepository());
 
         setPostReceiveHook((rp, commands) -> {
+            gitRepositoryService.updateLastChangeDate(into.getPrototype());
+
             new Thread(() -> {
                 var template = new RestTemplate();
                 var data = new ArrayList<HashMap<String, Object>>();

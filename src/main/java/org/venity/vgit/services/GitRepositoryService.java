@@ -18,7 +18,9 @@ import org.venity.vgit.repositories.UserCrudRepository;
 
 import java.io.File;
 import java.io.IOException;
+import java.time.LocalDateTime;
 import java.util.Collections;
+import java.util.function.Consumer;
 
 import static org.venity.vgit.VGitRegex.GIT_REPOSITORY_PATTERN;
 
@@ -71,6 +73,8 @@ public class GitRepositoryService {
         repositoryPrototype.setMembers(Collections.singleton(userPrototype.getLogin()));
         repositoryPrototype.setConfidential(confidential);
         repositoryPrototype.setProject(project);
+        repositoryPrototype.setCreationDate(LocalDateTime.now());
+        repositoryPrototype.setLastUpdateDate(repositoryPrototype.getCreationDate());
 
         userCrudRepository.save(userPrototype);
         repositoryPrototype = repositoryCrudRepository.save(repositoryPrototype);
@@ -167,6 +171,15 @@ public class GitRepositoryService {
         repositoryCrudRepository.delete(repository.getPrototype());
 
         return true;
+    }
+
+    public void updateLastChangeDate(RepositoryPrototype repositoryPrototype) {
+        repositoryPrototype.setLastUpdateDate(LocalDateTime.now());
+        projectCrudRepository.findByName(repositoryPrototype.getName()).ifPresent(projectPrototype -> {
+            projectPrototype.setLastUpdateDate(LocalDateTime.now());
+            projectCrudRepository.save(projectPrototype);
+        });
+        repositoryCrudRepository.save(repositoryPrototype);
     }
 
     @Getter
