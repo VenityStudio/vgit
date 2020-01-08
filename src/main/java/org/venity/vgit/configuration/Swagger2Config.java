@@ -26,12 +26,7 @@ public class Swagger2Config {
     @Bean
     public Docket api() {
         return new Docket(DocumentationType.SWAGGER_2)
-                .pathProvider(new RelativePathProvider(servletContext) {
-                    @Override
-                    public String getApplicationBasePath() {
-                        return "/api/";
-                    }
-                })
+                .pathProvider(new RelativePathProvider(servletContext))
                 .select()
                 .apis(RequestHandlerSelectors.basePackage("org.venity.vgit.controllers"))
                 .paths(PathSelectors.regex("/.*"))
@@ -42,7 +37,7 @@ public class Swagger2Config {
         return new ApiInfoBuilder()
                 .title("VGit REST API")
                 .description("VGit REST API")
-                .contact(new Contact("Maxim Tarasov", "venity.site", "yousan4ik@gmail.com"))
+                .contact(new Contact("Maxim Tarasov", "https://venity.site/", "yousan4ik@gmail.com"))
                 .license("MPL-2.0")
                 .licenseUrl("https://www.mozilla.org/en-US/MPL/2.0/")
                 .version("1.0.0-SNAPSHOT")

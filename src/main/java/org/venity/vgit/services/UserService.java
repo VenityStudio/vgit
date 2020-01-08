@@ -1,6 +1,9 @@
 package org.venity.vgit.services;
 
+import lombok.AllArgsConstructor;
+import lombok.Data;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -14,6 +17,7 @@ import org.venity.vgit.repositories.UserCrudRepository;
 
 import java.security.MessageDigest;
 import java.util.Optional;
+import java.util.regex.Pattern;
 
 import static org.venity.vgit.VGitRegex.*;
 
@@ -27,22 +31,21 @@ public class UserService implements AuthenticationProvider {
         this.passwordDigest = passwordDigest;
     }
 
-    public void register(String login, String fullName, String email, String password) throws InvalidFormatException, UserAlreadyExistsException {
-        if (!LOGIN_PATTERN.matcher(login).matches() ||
-                !EMAIL_PATTERN.matcher(email).matches() ||
-                !FULLNAME_PATTERN.matcher(fullName).matches() ||
-                !PASSWORD_PATTERN.matcher(password).matches()) {
-            throw new InvalidFormatException();
-        }
+    public void register(String login, String fullName, String email, String password)
+            throws InvalidFormatException, UserAlreadyExistsException {
+        checkField(LOGIN_PATTERN, login, "Invalid login format!", false);
+        checkField(EMAIL_PATTERN, email, "Invalid E-Mail format!", false);
+        checkField(FULLNAME_PATTERN, fullName, "Invalid full name format!", false);
+        checkField(PASSWORD_PATTERN, password, "Invalid password format!", false);
 
         // TODO: Implement with unique keys
-        if (userRepositories.existsByLoginOrEmail(login, email)) {
+        if (userRepositories.existsByLoginOrEmail(login, email))
             throw new UserAlreadyExistsException();
-        }
 
         var userPrototype = new UserPrototype();
         var passwordHash = passwordDigest.get().digest(password.getBytes());
 
+        userPrototype.setGender(UserPrototype.Gender.UNDEFINED);
         userPrototype.setLogin(login);
         userPrototype.setEmail(email);
         userPrototype.setFullName(fullName);
@@ -74,6 +77,41 @@ public class UserService implements AuthenticationProvider {
         );
     }
 
+    public UserPrototype edit(UserPrototype original, UserEditData data) throws InvalidFormatException {
+        checkField(EMAIL_PATTERN, data.getEmail(), "Invalid E-Mail format!", true);
+        checkField(FULLNAME_PATTERN, data.getFullName(), "Invalid full name format!", true);
+        checkField(PASSWORD_PATTERN, data.getPassword(), "Invalid password format!", true);
+
+        original.setFullName(ifNotNullReturn(data.getFullName(), original.getFullName()));
+        original.setGender(ifNotNullReturn(data.getGender(), original.getGender()));
+        original.setStatus(ifNotNullReturn(data.getStatus(), original.getStatus()));
+        original.setBio(ifNotNullReturn(data.getBio(), original.getBio()));
+        original.setEmail(ifNotNullReturn(data.getEmail(), original.getEmail()));
+
+        var password = data.getPassword();
+        if (password != null) {
+            original.setPasswordHash(passwordDigest.get().digest(password.getBytes()));
+        }
+
+        return userRepositories.save(original);
+    }
+
+    private void checkField(Pattern pattern, String field, String message, boolean consumeNull)
+            throws InvalidFormatException {
+        if (field == null) {
+            if (consumeNull) return;
+
+            throw new NullPointerException();
+        }
+
+        if (!pattern.matcher(field).matches())
+            throw new InvalidFormatException(message);
+    }
+
+    private <T> T ifNotNullReturn(T value, T defaultValue) {
+        return value != null ? value : defaultValue;
+    }
+
     @Override
     public boolean supports(Class<?> authentication) {
         return true;
@@ -88,5 +126,17 @@ public class UserService implements AuthenticationProvider {
             super(principal, credentials);
             this.userPrototype = userPrototype;
         }
+    }
+
+    @Data
+    @AllArgsConstructor
+    @NoArgsConstructor
+    public static class UserEditData {
+        private UserPrototype.Gender gender;
+        private String status;
+        private String email;
+        private String fullName;
+        private String password;
+        private String bio;
     }
 }

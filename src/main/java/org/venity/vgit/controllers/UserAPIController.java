@@ -45,6 +45,12 @@ public class UserAPIController extends AbstractController {
                 .orElseThrow(AuthorizationException::new);
     }
 
+    @PutMapping
+    public UserPrototype editCurrentUser(HttpServletRequest request, @RequestBody UserService.UserEditData data)
+            throws AuthorizationException, InvalidFormatException {
+        return userService.edit(getCurrentUser(request), data);
+    }
+
     @PostMapping("/register")
     public void registerUser(@RequestBody RegisterBody body)
             throws UserAlreadyExistsException, InvalidFormatException {

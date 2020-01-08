@@ -31,6 +31,11 @@ public class UserPrototype implements Serializable {
     private String email;
     private String status;
 
+    @Column(length = 1000)
+    private String bio;
+
+    private Gender gender = Gender.UNDEFINED;
+
     @NonNull
     @ElementCollection(targetClass = Integer.class, fetch = FetchType.EAGER)
     private Set<Integer> projects;
@@ -43,4 +48,10 @@ public class UserPrototype implements Serializable {
     @NonNull
     @JsonIgnore
     private byte[] passwordHash;
+
+    public enum Gender {
+        MALE,
+        FEMALE,
+        UNDEFINED
+    }
 }
