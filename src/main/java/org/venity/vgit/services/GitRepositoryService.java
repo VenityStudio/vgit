@@ -175,7 +175,7 @@ public class GitRepositoryService {
 
     public void updateLastChangeDate(RepositoryPrototype repositoryPrototype) {
         repositoryPrototype.setLastUpdateDate(LocalDateTime.now());
-        projectCrudRepository.findByName(repositoryPrototype.getName()).ifPresent(projectPrototype -> {
+        projectCrudRepository.findByName(repositoryPrototype.getProject()).ifPresent(projectPrototype -> {
             projectPrototype.setLastUpdateDate(LocalDateTime.now());
             projectCrudRepository.save(projectPrototype);
         });
