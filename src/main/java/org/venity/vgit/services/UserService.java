@@ -36,7 +36,7 @@ public class UserService implements AuthenticationProvider {
             throws InvalidFormatException, UserAlreadyExistsException {
         checkField(LOGIN_PATTERN, login, "Invalid login format!", false);
         checkField(EMAIL_PATTERN, email, "Invalid E-Mail format!", false);
-        checkField(FULLNAME_PATTERN, fullName, "Invalid full name format!", false);
+        checkField(FULL_NAME_PATTERN, fullName, "Invalid full name format!", false);
         checkField(PASSWORD_PATTERN, password, "Invalid password format!", false);
 
         // TODO: Implement with unique keys
@@ -82,7 +82,7 @@ public class UserService implements AuthenticationProvider {
 
     public UserPrototype edit(UserPrototype original, UserEditData data) throws InvalidFormatException {
         checkField(EMAIL_PATTERN, data.getEmail(), "Invalid E-Mail format!", true);
-        checkField(FULLNAME_PATTERN, data.getFullName(), "Invalid full name format!", true);
+        checkField(FULL_NAME_PATTERN, data.getFullName(), "Invalid full name format!", true);
         checkField(PASSWORD_PATTERN, data.getPassword(), "Invalid password format!", true);
 
         original.setFullName(ifNotNullReturn(data.getFullName(), original.getFullName()));

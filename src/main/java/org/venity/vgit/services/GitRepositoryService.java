@@ -20,7 +20,6 @@ import java.io.File;
 import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.Collections;
-import java.util.function.Consumer;
 
 import static org.venity.vgit.VGitRegex.GIT_REPOSITORY_PATTERN;
 
@@ -139,16 +138,19 @@ public class GitRepositoryService {
         return resolve(prototype);
     }
 
-    private GitRepository resolve(RepositoryPrototype repositoryPrototype) throws RepositoryNotFoundException {
+    private GitRepository resolve(RepositoryPrototype repositoryPrototype)
+            throws RepositoryNotFoundException {
         try {
-            return new GitRepository(repositoryPrototype, Git.open(new File(getRepositoryRoot(repositoryPrototype.getProject()),
+            return new GitRepository(repositoryPrototype, Git.open(
+                    new File(getRepositoryRoot(repositoryPrototype.getProject()),
                     repositoryPrototype.getName())).getRepository());
         } catch (IOException e) {
             throw new RepositoryNotFoundException();
         }
     }
 
-    public boolean delete(UserPrototype user, GitRepository repository) throws ForbiddenException, ProjectDoesntExistsException {
+    public boolean delete(UserPrototype user, GitRepository repository)
+            throws ForbiddenException, ProjectDoesntExistsException {
         if (!canAccess(user, repository.getPrototype(), AccessType.PUSH))
             throw new ForbiddenException();
 

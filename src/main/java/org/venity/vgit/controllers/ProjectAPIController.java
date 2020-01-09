@@ -1,58 +1,32 @@
 package org.venity.vgit.controllers;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
 import org.springframework.web.bind.annotation.*;
 import org.venity.vgit.exceptions.*;
 import org.venity.vgit.prototypes.ProjectPrototype;
 import org.venity.vgit.prototypes.UserPrototype;
 import org.venity.vgit.repositories.ProjectCrudRepository;
-import org.venity.vgit.repositories.UserCrudRepository;
+import org.venity.vgit.services.ProjectService;
 
 import javax.servlet.http.HttpServletRequest;
-import java.time.LocalDateTime;
-import java.util.Collections;
-import java.util.HashSet;
 
 @RestController
 @RequestMapping("/api/project")
 public class ProjectAPIController extends AbstractController {
+    private final ProjectService projectService;
     private final ProjectCrudRepository projectCrudRepository;
-    private final UserCrudRepository userCrudRepository;
 
-    public ProjectAPIController(ProjectCrudRepository projectCrudRepository, UserCrudRepository userCrudRepository) {
+    public ProjectAPIController(ProjectService projectService, ProjectCrudRepository projectCrudRepository) {
+        this.projectService = projectService;
         this.projectCrudRepository = projectCrudRepository;
-        this.userCrudRepository = userCrudRepository;
     }
 
     @PostMapping
-    public ProjectPrototype create(HttpServletRequest httpServletRequest, @RequestBody ProjectCreateBody body)
+    public ProjectPrototype create(HttpServletRequest httpServletRequest, @RequestBody ProjectService.ProjectCreateBody body)
             throws AuthorizationException, ProjectAlreadyExistsException, InvalidFormatException {
-        // TODO: move this code to service
         UserPrototype userPrototype = getAuthorization(httpServletRequest)
                 .orElseThrow(AuthorizationException::new);
-        if (projectCrudRepository.existsByName(body.getName()))
-            throw new ProjectAlreadyExistsException();
 
-        if (body.getName() == null)
-            throw new InvalidFormatException();
-
-        ProjectPrototype projectPrototype = new ProjectPrototype();
-        projectPrototype.setName(body.getName());
-        projectPrototype.setDescription(body.getDescription());
-        projectPrototype.setMembers(Collections.singleton(userPrototype.getLogin()));
-        projectPrototype.setRepositories(new HashSet<>());
-        projectPrototype.setCreationDate(LocalDateTime.now());
-        projectPrototype.setLastUpdateDate(projectPrototype.getCreationDate());
-
-        projectPrototype = projectCrudRepository.save(projectPrototype);
-
-        var projects = userPrototype.getProjects();
-        projects.add(projectPrototype.getId());
-        userPrototype.setProjects(projects);
-
-        userCrudRepository.save(userPrototype);
-        return projectPrototype;
+        return projectService.create(userPrototype, body);
     }
 
     @GetMapping("/{project}")
@@ -70,26 +44,6 @@ public class ProjectAPIController extends AbstractController {
             throws AuthorizationException, ProjectDoesntExistsException, ForbiddenException {
         UserPrototype userPrototype = getAuthorization(httpServletRequest)
                 .orElseThrow(AuthorizationException::new);
-        ProjectPrototype projectPrototype = get(project);
-
-        if (!projectPrototype.getMembers().contains(userPrototype.getLogin()))
-            throw new ForbiddenException();
-
-        projectPrototype.getMembers().forEach(login -> {
-            UserPrototype member = userCrudRepository.findByLogin(login).orElse(new UserPrototype());
-            var projects = member.getProjects();
-            projects.remove(projectPrototype.getId());
-            member.setProjects(projects);
-            userCrudRepository.save(member);
-        });
-
-        projectCrudRepository.delete(projectPrototype);
-    }
-
-    @Data
-    @AllArgsConstructor
-    public static class ProjectCreateBody {
-        private String name;
-        private String description;
+        projectService.delete(userPrototype, get(project));
     }
 }
