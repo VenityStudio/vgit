@@ -10,6 +10,7 @@ import org.eclipse.jgit.transport.RemoteConfig;
 import org.springframework.stereotype.Service;
 import org.venity.vgit.configuration.ApplicationConfiguration;
 import org.venity.vgit.exceptions.AuthorizationException;
+import org.venity.vgit.git.transport.hooks.ReceiveHookContext;
 import org.venity.vgit.git.transport.ssh.GitReceivePackCommand;
 import org.venity.vgit.git.transport.ssh.GitUploadPackCommand;
 import org.venity.vgit.prototypes.UserPrototype;
@@ -27,13 +28,17 @@ public class SSHService {
             = new AttributeRepository.AttributeKey<>();
     private final GitRepositoryService gitRepositoryService;
     private final UserCrudRepository userCrudRepository;
+    private final ReceiveHookContext context;
     private final SshServer server;
 
-    public SSHService(ApplicationConfiguration configuration, GitRepositoryService gitRepositoryService,
-                      UserCrudRepository userCrudRepository)
+    public SSHService(ApplicationConfiguration configuration,
+                      GitRepositoryService gitRepositoryService,
+                      UserCrudRepository userCrudRepository,
+                      ReceiveHookContext context)
             throws IOException {
         this.gitRepositoryService = gitRepositoryService;
         this.userCrudRepository = userCrudRepository;
+        this.context = context;
 
         if (configuration.hasProperty("ssh.enabled")
                 && configuration.getProperty("ssh.enabled").toLowerCase().equals("false")) {
@@ -83,7 +88,7 @@ public class SSHService {
             if (command.startsWith(RemoteConfig.DEFAULT_UPLOAD_PACK))
                 return new GitUploadPackCommand(command, gitRepositoryService, channel.getSession().getAttribute(sessionUserKey));
             else if (command.startsWith(RemoteConfig.DEFAULT_RECEIVE_PACK))
-                return new GitReceivePackCommand(command, gitRepositoryService, channel.getSession().getAttribute(sessionUserKey));
+                return new GitReceivePackCommand(command, gitRepositoryService, channel.getSession().getAttribute(sessionUserKey), context);
             else return new UnknownCommand(command);
         });
     }

@@ -45,4 +45,6 @@ public class RepositoryPrototype {
     @JsonIgnore
     @ElementCollection(targetClass = HookPrototype.class, fetch = FetchType.EAGER)
     private Set<HookPrototype> hooks;
+
+    private long commitCount = 0;
 }

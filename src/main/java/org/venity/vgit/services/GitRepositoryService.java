@@ -2,6 +2,7 @@ package org.venity.vgit.services;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.SneakyThrows;
 import org.apache.commons.io.FileUtils;
 import org.eclipse.jgit.api.Git;
 import org.eclipse.jgit.api.errors.GitAPIException;
@@ -20,6 +21,7 @@ import java.io.File;
 import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.Collections;
+import java.util.stream.StreamSupport;
 
 import static org.venity.vgit.VGitRegex.GIT_REPOSITORY_PATTERN;
 
@@ -175,13 +177,23 @@ public class GitRepositoryService {
         return true;
     }
 
-    public void updateLastChangeDate(RepositoryPrototype repositoryPrototype) {
-        repositoryPrototype.setLastUpdateDate(LocalDateTime.now());
-        projectCrudRepository.findByName(repositoryPrototype.getProject()).ifPresent(projectPrototype -> {
+    @SneakyThrows
+    public void update(GitRepository gitRepository) {
+        gitRepository.getPrototype().setLastUpdateDate(LocalDateTime.now());
+        projectCrudRepository.findByName(gitRepository.getPrototype().getProject()).ifPresent(projectPrototype -> {
             projectPrototype.setLastUpdateDate(LocalDateTime.now());
             projectCrudRepository.save(projectPrototype);
         });
-        repositoryCrudRepository.save(repositoryPrototype);
+
+        gitRepository.getPrototype().setCommitCount(StreamSupport
+                .stream(gitRepository.git()
+                        .log()
+                        .all()
+                        .call()
+                        .spliterator(), false)
+                .count());
+
+        repositoryCrudRepository.save(gitRepository.getPrototype());
     }
 
     @Getter
@@ -189,6 +201,10 @@ public class GitRepositoryService {
     public static class GitRepository {
         private final RepositoryPrototype prototype;
         private final Repository repository;
+
+        public Git git() {
+            return Git.wrap(getRepository());
+        }
     }
 
     public enum AccessType {

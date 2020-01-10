@@ -5,6 +5,7 @@ import org.apache.sshd.server.command.AbstractCommandSupport;
 import org.eclipse.jgit.transport.RemoteConfig;
 import org.venity.vgit.exceptions.RepositoryNotFoundException;
 import org.venity.vgit.git.transport.GitReceivePack;
+import org.venity.vgit.git.transport.hooks.ReceiveHookContext;
 import org.venity.vgit.prototypes.UserPrototype;
 import org.venity.vgit.services.GitRepositoryService;
 
@@ -15,12 +16,16 @@ import java.text.MessageFormat;
 public class GitReceivePackCommand extends AbstractCommandSupport {
     private final GitRepositoryService gitRepositoryService;
     private final UserPrototype userPrototype;
+    private final ReceiveHookContext context;
 
     public GitReceivePackCommand(String command,
-                                 GitRepositoryService gitRepositoryService, UserPrototype userPrototype) {
+                                 GitRepositoryService gitRepositoryService,
+                                 UserPrototype userPrototype,
+                                 ReceiveHookContext context) {
         super(command, null);
         this.gitRepositoryService = gitRepositoryService;
         this.userPrototype = userPrototype;
+        this.context = context;
     }
 
     @Override
@@ -46,7 +51,7 @@ public class GitReceivePackCommand extends AbstractCommandSupport {
         }
 
         try {
-            new GitReceivePack(repository, gitRepositoryService).receive(getInputStream(),
+            new GitReceivePack(repository, context).receive(getInputStream(),
                     getOutputStream(), getErrorStream());
             onExit(0);
         } catch (IOException e) {
