@@ -2,6 +2,7 @@ package org.venity.vgit.services;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.venity.vgit.exceptions.*;
 import org.venity.vgit.prototypes.ProjectPrototype;
@@ -76,10 +77,29 @@ public class ProjectService {
         projectCrudRepository.delete(projectPrototype);
     }
 
+    public ProjectPrototype edit(UserPrototype userPrototype, ProjectPrototype projectPrototype, ProjectEditBody body)
+            throws ForbiddenException {
+        if (!projectPrototype.getMembers().contains(userPrototype.getLogin()))
+            throw new ForbiddenException();
+
+        if (body.getDescription() != null)
+            projectPrototype.setDescription(body.getDescription());
+
+        return projectCrudRepository.save(projectPrototype);
+    }
+
     @Data
     @AllArgsConstructor
+    @NoArgsConstructor
     public static class ProjectCreateBody {
         private String name;
+        private String description;
+    }
+
+    @Data
+    @AllArgsConstructor
+    @NoArgsConstructor
+    public static class ProjectEditBody {
         private String description;
     }
 }

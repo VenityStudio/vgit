@@ -39,6 +39,17 @@ public class ProjectAPIController extends AbstractController {
         }
     }
 
+    @PutMapping("/{project}")
+    public ProjectPrototype edit(HttpServletRequest httpServletRequest,
+                                 @PathVariable String project,
+                                 @RequestBody ProjectService.ProjectEditBody body)
+            throws AuthorizationException, ProjectDoesntExistsException, ForbiddenException {
+        UserPrototype userPrototype = getAuthorization(httpServletRequest)
+                .orElseThrow(AuthorizationException::new);
+
+        return projectService.edit(userPrototype, get(project), body);
+    }
+
     @DeleteMapping("/{project}")
     public void delete(HttpServletRequest httpServletRequest, @PathVariable String project)
             throws AuthorizationException, ProjectDoesntExistsException, ForbiddenException {
