@@ -21,6 +21,7 @@ import java.io.File;
 import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.stream.StreamSupport;
 
 import static org.venity.vgit.VGitRegex.GIT_REPOSITORY_PATTERN;
@@ -193,6 +194,13 @@ public class GitRepositoryService {
                         .spliterator(), false)
                 .count());
 
+        var refs = gitRepository.git().branchList().call();
+        var branches = new HashSet<String>();
+
+        refs.forEach(ref -> branches.add(ref.getName()));
+        gitRepository.getPrototype().setBranchesCount(refs.size());
+        gitRepository.getPrototype().setBranches(branches);
+        gitRepository.getPrototype().setDefaultBranch(gitRepository.getRepository().getBranch());
         repositoryCrudRepository.save(gitRepository.getPrototype());
     }
 

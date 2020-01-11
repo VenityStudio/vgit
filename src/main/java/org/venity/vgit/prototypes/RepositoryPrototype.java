@@ -46,5 +46,10 @@ public class RepositoryPrototype {
     @ElementCollection(targetClass = HookPrototype.class, fetch = FetchType.EAGER)
     private Set<HookPrototype> hooks;
 
+    @ElementCollection(targetClass = String.class, fetch = FetchType.EAGER)
+    private Set<String> branches;
+
+    private String defaultBranch;
     private long commitCount = 0;
+    private long branchesCount = 0;
 }
