@@ -51,7 +51,7 @@ public class AvatarService {
         return true;
     }
 
-    public File getAvatarFile(Integer avatar) {
+    public File getAvatarFile(String avatar) {
         return new File(getAvatarRoot(), String.valueOf(avatar)).getAbsoluteFile();
     }
 

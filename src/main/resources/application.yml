@@ -1,12 +1,4 @@
 spring:
-  jpa:
-    hibernate:
-      ddl-auto: update
-    properties:
-      hibernate:
-        dialect: org.hibernate.dialect.MySQL5Dialect
-        id:
-          new_generator_mappings: false
   jackson:
     serialization:
       fail-on-empty-beans: false
@@ -15,5 +7,8 @@ spring:
       period: 1
     chain:
       cache: false
+  data:
+    mongodb:
+      uri: ${MONGODB_URI:mongodb://localhost:27017/vgit_db}
 server:
   port: ${SERVER_PORT:8080}

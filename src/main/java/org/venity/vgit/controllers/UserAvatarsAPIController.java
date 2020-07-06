@@ -50,13 +50,11 @@ public class UserAvatarsAPIController extends AbstractController {
 
     @GetMapping(value = "/{id}", produces = MediaType.IMAGE_JPEG_VALUE)
     public @ResponseBody byte[] get(@PathVariable String id)
-            throws UserDoesntExistsException, RedirectException, InvalidFormatException {
+            throws UserDoesntExistsException, RedirectException {
         try {
-            return FileUtils.readFileToByteArray(avatarService.getAvatarFile(Integer.parseInt(id)));
-        } catch (NumberFormatException e) {
-            throw new InvalidFormatException();
+            return FileUtils.readFileToByteArray(avatarService.getAvatarFile(id));
         } catch (Exception e) {
-            UserPrototype userPrototype = userCrudRepository.findById(Integer.parseInt(id))
+            UserPrototype userPrototype = userCrudRepository.findById(id)
                     .orElseThrow(UserDoesntExistsException::new);
 
             throw new RedirectException("https://www.gravatar.com/avatar/" + toMd5(userPrototype.getEmail()) + "?d=identicon&f=y");

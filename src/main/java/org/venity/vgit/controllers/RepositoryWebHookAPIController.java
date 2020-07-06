@@ -34,7 +34,7 @@ public class RepositoryWebHookAPIController extends AbstractController {
         UserPrototype userPrototype = getAuthorization(request)
                 .orElseThrow(AuthorizationException::new);
         RepositoryPrototype repositoryPrototype = repositoryCrudRepository
-                .findById(Integer.parseInt(repository)).orElseThrow(RepositoryNotFoundException::new);
+                .findById(repository).orElseThrow(RepositoryNotFoundException::new);
 
         if (!gitRepositoryService.canAccess(
                 userPrototype, repositoryPrototype, GitRepositoryService.AccessType.PUSH))
@@ -63,7 +63,7 @@ public class RepositoryWebHookAPIController extends AbstractController {
         UserPrototype userPrototype = getAuthorization(request)
                 .orElseThrow(AuthorizationException::new);
         RepositoryPrototype repositoryPrototype = repositoryCrudRepository
-                .findById(Integer.parseInt(repository)).orElseThrow(RepositoryNotFoundException::new);
+                .findById(repository).orElseThrow(RepositoryNotFoundException::new);
 
         if (!gitRepositoryService.canAccess(
                 userPrototype, repositoryPrototype, GitRepositoryService.AccessType.PUSH))
@@ -78,7 +78,7 @@ public class RepositoryWebHookAPIController extends AbstractController {
         UserPrototype userPrototype = getAuthorization(request)
                 .orElseThrow(AuthorizationException::new);
         RepositoryPrototype repositoryPrototype = repositoryCrudRepository
-                .findById(Integer.parseInt(repository)).orElseThrow(RepositoryNotFoundException::new);
+                .findById(repository).orElseThrow(RepositoryNotFoundException::new);
 
         if (!gitRepositoryService.canAccess(
                 userPrototype, repositoryPrototype, GitRepositoryService.AccessType.PUSH))

@@ -134,7 +134,7 @@ public class GitRepositoryService {
         return resolve(prototype);
     }
 
-    public GitRepository resolve(Integer repositoryId) throws RepositoryNotFoundException {
+    public GitRepository resolveById(String repositoryId) throws RepositoryNotFoundException {
         var prototype = repositoryCrudRepository.findById(repositoryId)
                 .orElseThrow(RepositoryNotFoundException::new);
 

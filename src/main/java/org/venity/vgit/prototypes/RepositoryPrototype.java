@@ -5,20 +5,20 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
+import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.mapping.Document;
 
-import javax.persistence.*;
 import java.time.LocalDateTime;
 import java.util.Set;
 
 @Data
-@Entity
+@Document
 @NoArgsConstructor
 public class RepositoryPrototype {
 
     @Id
     @NonNull
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    private Integer id;
+    private String id;
 
     @NonNull
     private String project;
@@ -39,14 +39,10 @@ public class RepositoryPrototype {
     private LocalDateTime lastUpdateDate;
 
     @NonNull
-    @ElementCollection(targetClass = String.class, fetch = FetchType.EAGER)
     private Set<String> members;
 
     @JsonIgnore
-    @ElementCollection(targetClass = HookPrototype.class, fetch = FetchType.EAGER)
     private Set<HookPrototype> hooks;
-
-    @ElementCollection(targetClass = String.class, fetch = FetchType.EAGER)
     private Set<String> branches;
 
     private String defaultBranch;

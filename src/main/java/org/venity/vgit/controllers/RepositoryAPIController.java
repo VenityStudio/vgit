@@ -36,7 +36,7 @@ public class RepositoryAPIController extends AbstractController {
     @GetMapping("/{repositoryId}")
     public RepositoryPrototype get(@PathVariable String repositoryId) throws RepositoryNotFoundException {
         return gitRepositoryService
-                .resolve(Integer.parseInt(repositoryId))
+                .resolveById(repositoryId)
                 .getPrototype();
     }
 
@@ -44,7 +44,7 @@ public class RepositoryAPIController extends AbstractController {
     public Map<String, Boolean> delete(HttpServletRequest request, @PathVariable String repositoryId)
             throws UserDoesntExistsException, RepositoryNotFoundException, ForbiddenException, ProjectDoesntExistsException {
         return Collections.singletonMap("status", gitRepositoryService
-                .delete(getAuthorization(request).orElseThrow(UserDoesntExistsException::new), gitRepositoryService.resolve(Integer.parseInt(repositoryId))));
+                .delete(getAuthorization(request).orElseThrow(UserDoesntExistsException::new), gitRepositoryService.resolveById(repositoryId)));
     }
 
     @Data
